@@ -1,0 +1,114 @@
+<div class="main-content" *ngIf="top && top.data.thread else noDataFound">
+
+
+
+  <!--TITLE THREAD-->
+  <div class="container-fluid title">
+    <div class="row">
+      <div class="col-xs-12" style="text-align: center; ">
+        <div class="" >
+          <h4 style="margin: 0; color: black; font-weight: bold">{{top.data.thread.title}}</h4>
+          <p>Created by {{top.data.thread.get_creator.name}}</p>
+          <p>Date: {{helperService.getReadableDate(top.data.thread.created_at)}}</p>
+          <!--<p>{{helperService.getReadableDate(data.created_at)}}</p>-->
+        </div>
+      </div>
+    </div>
+  </div>
+  <!--REPLIES-->
+  <div class="container-fluid" >
+    <div class="row " *ngFor="let data of top.data.thread.get_replies; let i = index;">
+      <div class="col-md-12">
+        <div class="card">
+          <div class="card-header" [ngClass]="{mySelf: data.get_user.id == userService.userData.id, notMySelf:data.get_user.id != userService.userData.id }" >
+            <h4    class="title" style="display: block">{{data.get_user.name}}</h4>
+            <p style="color:white">{{helperService.getReadableDate(data.created_at)}}</p>
+          </div>
+          <div class="card-content table-responsive">
+
+            <div >
+              <div class="thread" >
+
+
+                <p>{{data.content}}</p>
+
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!--<app-pagination [onClick]="onClickPagination" *ngIf="top" [filter]="filter" [pagination]="top.data.users"></app-pagination>-->
+      </div>
+
+
+    </div>
+
+
+    <!--container fluid-->
+  </div>
+
+
+
+
+
+
+  <!--my reply-->
+  <div class="container-fluid" >
+    <div class="row" >
+      <div class="col-md-12">
+        <div class="card">
+          <!--<div class="card-header" data-background-color="red">-->
+            <!--<h4    class="title" style="display: block">Reply to this thread</h4>-->
+          <!--</div>-->
+          <div class="card-content table-responsive">
+
+            <div >
+              <div class="thread" >
+
+                <form #parentForm="ngForm">
+                  <app-row-floating-input [parentForm]="parentForm" [rowBaseForms]="rowBaseForms"></app-row-floating-input>
+
+                  <button type="button" class="btn btn-success" (click)="this.submitReply(parentForm)" >Submit Reply</button>
+                </form>
+
+
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!--<app-pagination [onClick]="onClickPagination" *ngIf="top" [filter]="filter" [pagination]="top.data.users"></app-pagination>-->
+      </div>
+
+
+    </div>
+
+
+    <!--container fluid-->
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</div>
+
+
+
+<app-my-modal [modalData]="modalData"></app-my-modal>
+
+
+<ng-template #noDataFound><div class="card-content">No data found</div></ng-template>

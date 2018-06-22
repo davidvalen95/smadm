@@ -1,0 +1,265 @@
+<div class="main-content" *ngIf="top">
+<div class="container-fluid"  *ngIf="this.top.isSuccess else notSucceed">
+    <div class="row">
+
+
+
+        <div class="col-md-4">
+            <div class="card card-profile">
+                <div class="card-avatar">
+                    <a *ngIf="this.top.data.user.get_photo"   data-fancybox="gallery" [href]="apiService.baseUrl + this.top.data.user.get_photo.path + this.top.data.user.get_photo.nameLg">
+                        <img class="img" [src]="apiService.baseUrl + this.top.data.user.get_photo.path + this.top.data.user.get_photo.nameSm"/>
+                    </a>
+
+                    <a *ngIf="!this.top.data.user.get_photo" >
+                        <img  src="/assets/img/user/default.png" />
+
+                    </a>
+
+                </div>
+
+                <div class="content">
+                    <h4 class="card-title">{{top.data.user.name}}</h4>
+                    <h6 class="category" style="color:tomato;">{{top.data.user.get_previledge.key}}</h6>
+
+                    <p class="card-content">
+                        <!--Don't be scared of the truth because we need to restart the human foundation in truth And I love you like Kanye loves Kanye I love Rick Owens’ bed design but the back is...-->
+                    <!--</p>-->
+                    <!--<a href="#pablo" class="btn btn-danger btn-round">Follow</a>-->
+                </div>
+
+            </div>
+
+            <button (click)="presentModal('giveScore')" class="btn btn-info centerMargin" *ngIf="top.data.isCanScore" data-target="#modal" data-toggle="modal">Give score / penilaian</button>
+        </div>
+
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header" data-background-color="red">
+                    <h4 class="title">Edit Profile</h4>
+                    <p class="category">Complete your profile</p>
+                </div>
+                <div class="card-content">
+                    <form #parentForm="ngForm">
+
+                        <app-row-floating-input [parentForm]="parentForm" [rowBaseForms]="this.rowBaseForms"></app-row-floating-input>
+
+
+                        <button *ngIf="this.isCanEditProfile" type="button" (click)="submitUpdateProfileForm(parentForm)" class="btn btn-info pull-right">Update Profile</button>
+                        <p *ngIf="!this.isCanEditProfile"><span style="color:tomato;">*</span>You don't have permission to edit this profile</p>
+                        <div class="clearfix"></div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+
+    <!--row-->
+    </div>
+
+
+
+    <!--SMCABANG-->
+    <div class="row" *ngIf="this.top && this.top.data.user">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header" data-background-color="red">
+                    <h4 class="title" style="display: inline-block">Sekolah Minggu</h4>
+                    <!--<button data-target="#formModal " data-toggle="modal"  (click)="presentModal(selectData)"  class="pull-right btn btn-primary"><i class="material-icons">playlist_add</i> Add new for {{selectData.key}}</button>-->
+                    <!--<p class="category"></p>-->
+                </div>
+                <div class="card-content table-responsive" *ngIf="this.top.data.user.get_branch_user.length > 0 else noDataFound">
+                    <table class="table">
+                        <thead class="text-danger">
+                        <tr>
+                            <th>No</th>
+                            <th>Aktif</th>
+                            <th>Role</th>
+                            <th>Nama Cabang</th>
+                            <th>Alamat Cabang</th>
+                            <th>Ketua Cabang</th>
+                            <th>Tanggal Masuk</th>
+                            <th>Tanggal Keluar</th>
+                            <th>Kelas</th>
+
+                            <!--<th>Action</th>-->
+                        </tr>
+                        </thead>
+                        <tbody >
+                        <tr appMarkClicked="" *ngFor="let data of top.data.user.get_branch_user; let i = index"  >
+                            <td>{{i + 1}}</td>
+                            <td>{{data.isActive ? "Aktif" : "Non-Aktif"}}</td>
+                            <td>{{data.get_role.key}}</td>
+                            <td><a [routerLink]="['/branch/detail',{id:data.get_branch.id}]">{{data.get_branch.name}}</a></td>
+                            <td>{{data.get_branch.address}}</td>
+                            <td><a *ngIf="data.get_branch.get_head" [routerLink]="['/profile',{id:data.get_branch.get_head.id}]">{{data.get_branch.get_head.name}}</a></td>
+                            <td>{{helperService.getReadableDate(data.dateIn)}}</td>
+                            <td>{{helperService.getReadableDate(data.dateOut)}}</td>
+                            <td>{{data.get_class.key}}</td>
+
+                        </tr>
+
+                        </tbody>
+                    </table>
+
+                </div>
+            </div>
+
+            <!--<app-pagination [onClick]="onClickPagination" *ngIf="top" [filter]="filter" [pagination]="top.data.rooms"></app-pagination>-->
+        </div>
+
+
+    <!--row-->
+    </div>
+
+
+
+    <!-- rapot -->
+    <div class="row" *ngIf="this.top && this.top.data.user && this.top.data.user.get_me_as_pupil_scores">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header" data-background-color="red">
+                    <h4 class="title" style="display: inline-block">Rapot <span *ngIf="top.data.user"> {{top.data.user.name}}</span></h4>
+                    <!--<button data-target="#formModal " data-toggle="modal"  (click)="presentModal(selectData)"  class="pull-right btn btn-primary"><i class="material-icons">playlist_add</i> Add new for {{selectData.key}}</button>-->
+                    <!--<p class="category"></p>-->
+                </div>
+                <div class="card-content table-responsive" *ngIf="this.top.data.user.get_me_as_pupil_scores.length > 0 else noDataFound">
+                    <table class="table">
+                        <thead class="text-danger">
+                        <tr>
+                            <th>No</th>
+                            <th>Date</th>
+                            <th>Sumber penilaian</th>
+                            <th>Description</th>
+
+
+                            <!--<th>Action</th>-->
+                        </tr>
+                        </thead>
+                        <tbody >
+                        <tr appMarkClicked="" *ngFor="let data of top.data.user.get_me_as_pupil_scores; let i = index" >
+                            <td>{{i + 1}}</td>
+                            <td>{{helperService.getReadableDate(data.created_at)}}</td>
+                            <td><a [routerLink]="['/profile',{id:data.get_teacher.id}]">{{data.get_teacher.name}}</a></td>
+                            <td>{{data.description}}</td>
+                        </tr>
+
+                        </tbody>
+                    </table>
+
+                </div>
+            </div>
+
+            <!--<app-pagination [onClick]="onClickPagination" *ngIf="top" [filter]="filter" [pagination]="top.data.rooms"></app-pagination>-->
+        </div>
+
+
+    <!--row-->
+    </div>
+
+
+
+    <!--Pemberi Nilai-->
+    <div class="row" *ngIf="this.top && this.top.data.user && this.top.data.user.get_me_as_teacher_scores">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header" data-background-color="red">
+                    <h4 class="title" style="display: inline-block"><span *ngIf="top.data.user">{{top.data.user.name}}</span> sebagai sumber penilaian</h4>
+
+                    <!--<button data-target="#formModal " data-toggle="modal"  (click)="presentModal(selectData)"  class="pull-right btn btn-primary"><i class="material-icons">playlist_add</i> Add new for {{selectData.key}}</button>-->
+                    <!--<p class="category"></p>-->
+                </div>
+                <div class="card-content table-responsive" *ngIf="this.top.data.user.get_me_as_pupil_scores.length > 0 else noDataFound">
+                    <table class="table">
+                        <thead class="text-danger">
+                        <tr>
+                            <th>No</th>
+                            <th>Date</th>
+                            <th>Target penilaian</th>
+                            <th>Description</th>
+
+
+                            <!--<th>Action</th>-->
+                        </tr>
+                        </thead>
+                        <tbody >
+                        <tr appMarkClicked="" *ngFor="let data of top.data.user.get_me_as_teacher_scores; let i = index"  >
+                            <td>{{i + 1}}</td>
+                            <td>{{helperService.getReadableDate(data.created_at)}}</td>
+                            <td><a [routerLink]="['/profile',{id:data.get_pupil.id}]">{{data.get_pupil.name}}</a></td>
+                            <td>{{data.description}}</td>
+                        </tr>
+
+                        </tbody>
+                    </table>
+
+                </div>
+            </div>
+
+            <!--<app-pagination [onClick]="onClickPagination" *ngIf="top" [filter]="filter" [pagination]="top.data.rooms"></app-pagination>-->
+        </div>
+
+
+    <!--row-->
+    </div>
+
+
+<!--HISTORY-->
+    <div class="row" *ngIf="this.top && this.top.data.user && this.top.data.user.get_histories">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header" data-background-color="red">
+                    <h4 class="title" style="display: inline-block">History user</h4>
+                    <!--<button data-target="#formModal " data-toggle="modal"  (click)="presentModal(selectData)"  class="pull-right btn btn-primary"><i class="material-icons">playlist_add</i> Add new for {{selectData.key}}</button>-->
+                    <!--<p class="category"></p>-->
+                </div>
+                <div class="card-content table-responsive" *ngIf="this.top.data.user.get_histories.length > 0 else noDataFound">
+                    <table class="table">
+                        <thead class="text-danger">
+                        <tr>
+                            <th>No</th>
+                            <th>Date</th>
+                            <th>Event</th>
+                            <th>Description</th>
+
+
+                            <!--<th>Action</th>-->
+                        </tr>
+                        </thead>
+                        <tbody >
+                        <tr appMarkClicked="" *ngFor="let data of top.data.user.get_histories; let i = index"  >
+                            <td>{{i + 1}}</td>
+                            <td>{{helperService.getReadableDate(data.created_at)}}</td>
+                            <td>{{data.get_event.key}}</td>
+                            <td>{{data.description}}</td>
+                        </tr>
+
+                        </tbody>
+                    </table>
+
+                </div>
+            </div>
+
+            <!--<app-pagination [onClick]="onClickPagination" *ngIf="top" [filter]="filter" [pagination]="top.data.rooms"></app-pagination>-->
+        </div>
+
+
+    <!--row-->
+    </div>
+
+
+
+<!--containerfluid-->
+</div>
+
+
+<!--mainContent-->
+</div>
+
+<app-my-modal [modalData]="this.modalData" ></app-my-modal>
+
+
+
+<ng-template #loading>loading</ng-template>
+<ng-template #notSucceed>{{this.top.message || "Not found"}}</ng-template>
+<ng-template #noDataFound><div class="card-content">No data found</div></ng-template>

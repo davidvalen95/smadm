@@ -1,0 +1,15 @@
+.notYetDone{
+  ul{
+    padding: 0;
+  }
+
+  li{
+    margin: 6px 12px;
+    list-style: none;
+    display: inline-block;
+    padding: 4px;
+    background: #efefef;
+    cursor: pointer;
+    border-radius: 1px;
+  }
+}

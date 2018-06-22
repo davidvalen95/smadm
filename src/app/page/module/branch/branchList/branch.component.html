@@ -1,0 +1,83 @@
+<div class="main-content">
+  <div class="container-fluid">
+
+
+
+    <div class="row" style="margin-bottom: 24px;">
+      <div class=" col-xs-12 col-md-6" >
+        <div class="card">
+          <div (click)="this.filter.isOpen = !this.filter.isOpen" class="card-header" data-background-color="blue">
+            <h4 class="title">My Branch / Cabang SM Saya</h4>
+            <!--<p class="category">Click here to toggle the menu</p>-->
+          </div>
+          <div *ngIf="this.filter.isOpen" class="card-content animationExpandBottom">
+            <a style="display:block; margin-bottom: 16px;" *ngFor="let data of top.data.myBranchUsers" [routerLink]="['/branch/detail',{id:data.get_branch.id}]">{{data.get_branch.name}}</a>
+          </div>
+        </div>
+      </div>
+
+
+      <div class=" col-xs-12" >
+        <button *ngIf="userService.userData.get_previledge.isCanConfigureBranch" (click)="presentModal('addBranch')" class="btn btn-info pull-right" data-target="#modal" data-toggle="modal">Add branch</button>
+
+      </div>
+
+
+    </div>
+
+
+
+
+    <div class="row" >
+      <div class="col-md-12">
+        <div class="card">
+          <div class="card-header" data-background-color="red">
+            <h4 class="title" style="display: inline-block">Branch List <span *ngIf="top && top.data.branches">({{top.data.branches.total}})</span></h4>
+            <!--<button data-target="#formModal " data-toggle="modal"  (click)="presentModal(selectData)"  class="pull-right btn btn-primary"><i class="material-icons">playlist_add</i> Add new for {{selectData.key}}</button>-->
+            <!--<p class="category">Here is a subtitle for this table</p>-->
+          </div>
+          <div class="card-content table-responsive">
+            <table class="table">
+              <thead class="text-danger">
+              <tr>
+                <th>No</th>
+                <th>Name</th>
+                <th>Head</th>
+                <th>Owner</th>
+                <th>Total Teacher</th>
+                <th>Total Pupil</th>
+              </tr>
+              </thead>
+              <tbody *ngIf="top && top.data.branches else noDataFound">
+              <tr  *ngFor="let data of top.data.branches.data; let i = index;"   >
+
+                <td>{{i + 1}}</td>
+                <td><a [routerLink]="['/branch/detail',{id:data.id}]">{{data.name}}</a></td>
+                <td><a *ngIf="data.get_head" [routerLink]="['/profile',{id:data.get_head.id}]">{{data.get_head.name}}</a></td>
+                <td><a *ngIf="data.get_owner" [routerLink]="['/profile',{id:data.get_owner.id}]">{{data.get_owner.name}}</a></td>
+                <td>{{data['totalTeacher']}}</td>
+                <td>{{data['totalPupil']}}</td>
+
+              </tr>
+
+              </tbody>
+            </table>
+
+          </div>
+        </div>
+
+        <app-pagination [onClick]="onClickPagination" *ngIf="top" [filter]="filter" [pagination]="top.data.users"></app-pagination>
+      </div>
+
+
+    </div>
+
+  </div>
+</div>
+
+
+
+<app-my-modal [modalData]="modalData"></app-my-modal>
+
+
+<ng-template #noDataFound><div class="card-content">No data found</div></ng-template>

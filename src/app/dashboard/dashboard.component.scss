@@ -1,0 +1,35 @@
+.thread{
+
+  padding-bottom: 12px;
+
+  border-bottom: 1px solid #ddd;
+  .threadTitle{
+    a{
+
+      color: #444;
+      font-size: 16px;
+    }
+    margin: 0 !important;
+
+  }
+
+  .creator{
+    text-align: right;
+    color: #999;
+  }
+  .lastReply{
+    text-align: right;
+    color: #999;
+  }
+
+  .notYetRead{
+    background: linear-gradient(60deg, #ef5350, #e53935);;
+    font-weight: bold;
+    display: inline-block;
+    color: white;
+    border-radius: 4px;
+    padding: 4px;
+  }
+
+
+}

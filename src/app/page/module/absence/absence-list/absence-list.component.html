@@ -1,0 +1,194 @@
+<div class="main-content" *ngIf="top">
+  <div class="container-fluid">
+    <div class="row" *ngIf="this.top.isSuccess else notSucceed">
+
+
+
+      <div class="col-md-4">
+        <div class="card card-profile">
+          <div class="content">
+            <h4 class="card-title">{{top.data.branch.name}}</h4>
+            <p class="card-content" style="color: tomato;">
+              Absensi
+            </p>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="col-md-8 col 12" >
+        <div class="card" >
+          <div class="card-header" data-background-color="red">
+            <h4 class="title">Record absensi</h4>
+            <p class="category">Data 4 minggu terakhir</p>
+          </div>
+          <div class="card-content table-responsive">
+
+            <table class="table">
+              <thead class="text-danger">
+              <tr>
+                <th>Tanggal</th>
+                <th>Absen /<br>Tidak hadir</th>
+                <th>Total<br/>Murid</th>
+                <th>Belum<br/>Follow Up</th>
+                <th>Presentase<br/>Kehadiran</th>
+                <th>Kelas <br/>Belum terisi</th>
+                <th>Action</th>
+
+              </tr>
+              </thead>
+              <tbody >
+              <tr *ngFor="let data of this.top.data.absenceDateRecords; let i = index"  data-toggle="modal" data-target="#absenceDateModal" >
+                <td>{{helperService.getReadableDate(data.targetDate)}}</td>
+                <td>{{data.totalAbsence}}</td>
+                <td>{{data.totalPupil}}</td>
+                <td> <span [style.color]="data.notYetFollowedUp > 0 ? 'tomato' : 'black'">{{data.notYetFollowedUp}}</span></td>
+                <td>{{(data.totalPupil-data.totalAbsence)/data.totalPupil * 100}}%</td>
+                <td>{{data.notYetDone}}</td>
+                <td><button class="btn btn-info" (click)="presentModal('viewDetail', data)">Detail</button></td>
+              </tr>
+
+              </tbody>
+            </table>
+
+          </div>
+        </div>
+      </div>
+
+
+      <!--row-->
+    </div>
+
+
+
+    <!--Absensi Not Done-->
+    <div class="row" *ngIf="this.top && this.top.data.branch">
+      <div class="col-xs-12 col-md-12">
+        <div class="card">
+          <div class="card-header" data-background-color="red">
+            <h4 class="title" style="display: inline-block">Absensi belum terisi</h4>
+            <!--<p class="category"></p>-->
+          </div>
+
+
+
+
+          <div class="card-content table-responsive notYetDone" *ngIf="this.top.data.absenceDatesNotDone.length > 0 else noDataFound">
+            <table class="table">
+              <thead class="text-danger">
+              <tr>
+                <th>No</th>
+                <th>Tanggal</th>
+                <th>Kelas</th>
+
+              </tr>
+              </thead>
+              <tbody >
+              <tr appMarkClicked="" *ngFor="let data of this.top.data.absenceDatesNotDone; let i = index" >
+                <td>{{i + 1}}</td>
+                <td>{{helperService.getReadableDate(data.targetDate)}}</td>
+                <!--<td>{{data.get_user.phone}}</td>-->
+                <td>
+                  <ul class="notYetDone">
+                    <li *ngFor="let absenceBranch of data.get_absence_branches" data-target="#modal" data-toggle="modal" (click)="presentModal('absence', absenceBranch)">
+                      {{absenceBranch.get_select_class.key}}
+                    </li>
+                  </ul>
+                </td>
+
+
+              </tr>
+
+              </tbody>
+            </table>
+
+          </div>
+        </div>
+
+        <!--<app-pagination [onClick]="onClickPagination" *ngIf="top" [filter]="filter" [pagination]="top.data.rooms"></app-pagination>-->
+      </div>
+
+
+
+
+
+
+      <!--row-->
+    </div>
+
+
+
+
+
+
+
+    <!--containerfluid-->
+  </div>
+
+
+  <!--mainContent-->
+</div>
+
+<app-my-modal [modalData]="modalData"></app-my-modal>
+
+
+
+
+
+
+
+<div id="absenceDateModal" class="modal fade myModal" role="dialog" >
+  <div class="modal-dialog" *ngIf="this.absenceDateModalData">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+
+        <h4  class="modal-title" >Absence Record for {{helperService.getReadableDate(absenceDateModalData.targetDate)}}</h4>
+      </div>
+        <div class="modal-body">
+
+          <table class="table table-stripped">
+            <thead>
+              <th>Class</th>
+              <th class="hidden-sm visible-md" >Absence<br/>Commiter</th>
+              <th>Murid Absen</th>
+            </thead>
+            <tbody>
+              <tr *ngFor="let absenceBranch of absenceDateModalData.get_absence_branches">
+                <td>{{absenceBranch.get_select_class.key}}</td>
+                <td class="hidden-sm visible-md"><a *ngIf="absenceBranch && absenceBranch.get_user_commiter && absenceBranch.get_user_commiter.id" (click)='helperService.closeModal()' [routerLink]="['/profile',{id: absenceBranch.get_user_commiter.id}]">{{absenceBranch.get_user_commiter.name}}</a></td>
+                <td>
+                  <ol style="padding-left: 0;">
+                    <li *ngFor="let userAbsenceRecord of absenceBranch.get_user_absence_record">
+                      <a (click)='helperService.closeModal()' [routerLink]="['/profile',{id: userAbsenceRecord.get_branch_user.get_user.id}]">{{userAbsenceRecord.get_branch_user.get_user.name}}</a>
+                      <p *ngIf="userAbsenceRecord.isFollowedUp">{{userAbsenceRecord.reason}}</p>
+                      <div *ngIf="!userAbsenceRecord.isFollowedUp" data-toggle="modal" data-target="#modal" (click)="presentModal('followUp',userAbsenceRecord)">
+                        <b style="margin:0;padding-top:6px; padding-bottom: 6px;cursor:pointer;color: tomato;" >(X)Isi hasil follow up</b>
+                      </div>
+                    </li>
+                  </ol>
+                </td>
+              </tr>
+
+            </tbody>
+          </table>
+        </div>
+        <div class="modal-footer">
+          <!--<button *ngFor="let button of modalData.buttons" type="button"  [class]="button.class"  (click)="button.onClick(parentForm)">{{button.text}}</button>-->
+        </div>
+
+    </div>
+
+  </div>
+</div>
+
+
+
+
+
+
+
+<ng-template #loading>loading</ng-template>
+<ng-template #notSucceed>{{title}} Not Found</ng-template>
+<ng-template #noDataFound><div class="card-content">No data found</div></ng-template>

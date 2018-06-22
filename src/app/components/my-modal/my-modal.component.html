@@ -1,0 +1,31 @@
+
+
+
+<button style="visibility:hidden" type="button" class="btn btn-danger closeModal" data-dismiss="modal">Close</button>
+
+
+<div id="modal" class="modal fade myModal" role="dialog" >
+  <div class="modal-dialog" *ngIf="this.modalData">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+
+        <h4  class="modal-title" ><span [innerHtml]="modalData.title | keepAsHtml"></span></h4>
+        <p  class="modal-title" *ngIf="modalData.subTitle" ><span [innerHtml]="modalData.subTitle | keepAsHtml"></span></p>
+      </div>
+      <form #parentForm="ngForm">
+        <div class="modal-body">
+          <app-row-floating-input [parentForm]="parentForm" [rowBaseForms]="modalData.baseForms"></app-row-floating-input>
+        </div>
+        <div class="modal-footer">
+          <button *ngFor="let button of modalData.buttons" type="button"  [class]="button.class"  (click)="button.onClick(parentForm)">{{button.text}}</button>
+        </div>
+      </form>
+
+    </div>
+
+  </div>
+</div>
+
+

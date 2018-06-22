@@ -1,0 +1,183 @@
+<div class="main-content" *ngIf="top">
+  <div class="container-fluid">
+    <div class="row" *ngIf="this.top.isSuccess else notSucceed">
+
+
+
+      <div class="col-md-4">
+        <div class="card card-profile">
+          <div class="content">
+            <h4 class="card-title">{{top.data.branch.name}}</h4>
+            <p class="card-content">
+          </div>
+
+        </div>
+        <div class="text-center">
+          <a *ngIf="top.data.isCanAbsence" [routerLink]="['/absence/list' , {id: top.data.branch.id}]"  class="btn btn-info ">Absensi</a>
+
+        </div>
+      </div>
+
+      <div class="col-md-8">
+        <div class="card">
+          <div class="card-header" data-background-color="red">
+            <h4 class="title">Edit {{title}}</h4>
+          </div>
+          <div class="card-content">
+            <form #parentForm="ngForm">
+
+              <app-row-floating-input [parentForm]="parentForm" [rowBaseForms]="this.rowBaseForms"></app-row-floating-input>
+
+
+              <button *ngIf="this.isCanEditProfile" type="button" (click)="submitUpdateProfileForm(parentForm)" class="btn btn-info pull-right">Update {{title}}</button>
+              <p *ngIf="!this.isCanEditProfile"><span style="color:tomato;">*</span>You don't have permission to edit this {{title}}</p>
+              <div class="clearfix"></div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+
+      <!--row-->
+    </div>
+
+
+
+    <!--teacher-->
+    <div class="row" *ngIf="this.top && this.top.data.branch">
+      <div class="col-xs-12 col-md-6">
+        <div class="card">
+          <div class="card-header" data-background-color="red">
+            <h4 class="title" style="display: inline-block">Guru ({{top.data.branch.get_users_as_teacher.length}})</h4>
+            <button *ngIf="isCanAddTeacher"  data-target="#modal" data-toggle="modal"  (click)="presentModal('teacher')"  class="pull-right btn btn-info">Add Teacher</button>
+            <!--<p class="category"></p>-->
+          </div>
+
+
+
+
+          <div class="card-content table-responsive" *ngIf="this.top.data.branch.get_users_as_teacher.length > 0 else noDataFound">
+            <table class="table">
+              <thead class="text-danger">
+              <tr>
+                <th>No</th>
+                <th>Nama</th>
+                <!--<th>No. Tlp</th>-->
+                <th>Aktif</th>
+                <th class="hidden-xs visible-lg" >Tanggal Masuk</th>
+                <th class="hidden-xs visible-lg" >Tanggal Keluar</th>
+                <th>Kelas</th>
+
+                <!--<th>Action</th>-->
+              </tr>
+              </thead>
+              <tbody >
+              <tr appMarkClicked="" *ngFor="let data of top.data.branch.get_users_as_teacher; let i = index" >
+                <td>{{i + 1}}</td>
+                <td><a [routerLink]="['/profile',{id:data.get_user.id}]">{{data.get_user.name}}</a></td>
+                <!--<td>{{data.get_user.phone}}</td>-->
+                <td><app-row-floating-input [rowBaseForms]="teacherActiveForms[i]"></app-row-floating-input></td>
+                <td class="hidden-xs visible-lg" >{{helperService.getReadableDate(data.dateIn)}}</td>
+                <td class="hidden-xs visible-lg" >{{helperService.getReadableDate(data.dateOut)}}</td>
+                <td><app-row-floating-input [rowBaseForms]="teacherClassForms[i]"></app-row-floating-input></td>
+
+
+              </tr>
+
+              </tbody>
+            </table>
+
+          </div>
+        </div>
+
+        <!--<app-pagination [onClick]="onClickPagination" *ngIf="top" [filter]="filter" [pagination]="top.data.rooms"></app-pagination>-->
+      </div>
+
+
+
+
+
+      <!--pupil-->
+      <div class="col-xs-12 col-md-6">
+        <div class="card">
+          <div class="card-header" data-background-color="red">
+            <h4 class="title" style="display: inline-block">Murid ({{top.data.branch.get_users_as_pupil.length}})</h4>
+
+            <!--<p class="category"></p>-->
+
+          </div>
+
+
+
+
+          <div class="card-content " *ngIf="this.top.data.branch.get_users_as_pupil.length > 0 else noDataFound">
+
+            <button *ngIf="isCanAddPupil"  (click)="apiExecuteAdvanceClass(this.top.data.branch)"  class="btn btn-danger">Advance Class</button>
+            <button *ngIf="isCanAddPupil"  data-target="#modal" data-toggle="modal"  (click)="presentModal('pupil')"  class="btn btn-info">Add Pupil</button>
+
+            <div style="display:block" class="table-responsive">
+              <table class="table ">
+                <thead class="text-danger">
+                <tr>
+                  <th>No</th>
+                  <th>Nama</th>
+                  <th>Aktif</th>
+
+                  <th class="hidden-xs visible-lg">Tanggal Masuk</th>
+                  <th class="hidden-xs visible-lg"> Tanggal Keluar</th>
+                  <th>Kelas</th>
+
+                  <!--<th>Action</th>-->
+                </tr>
+                </thead>
+                <tbody >
+                <tr appMarkClicked="" *ngFor="let data of top.data.branch.get_users_as_pupil; let i = index" >
+                  <td>{{i + 1}}</td>
+                  <td><a [routerLink]="['/profile',{id:data.get_user.id}]">{{data.get_user.name}}</a></td>
+                  <!--<td>{{data.get_user.phone}}</td>-->
+                  <td><app-row-floating-input [rowBaseForms]="pupilActiveForms[i]"></app-row-floating-input></td>
+
+                  <td class="hidden-xs visible-lg">{{helperService.getReadableDate(data.dateIn)}}</td>
+                  <td class="hidden-xs visible-lg">{{helperService.getReadableDate(data.dateOut)}}</td>
+                  <td><app-row-floating-input [rowBaseForms]="pupilClassForms[i]"></app-row-floating-input></td>
+
+
+                </tr>
+
+                </tbody>
+              </table>
+            </div>
+
+
+          </div>
+        </div>
+
+        <!--<app-pagination [onClick]="onClickPagination" *ngIf="top" [filter]="filter" [pagination]="top.data.rooms"></app-pagination>-->
+      </div>
+
+
+
+
+
+      <!--row-->
+    </div>
+
+
+
+
+
+
+
+    <!--containerfluid-->
+  </div>
+
+
+  <!--mainContent-->
+</div>
+
+<app-my-modal [modalData]="modalData"></app-my-modal>
+
+
+<ng-template #loading>loading</ng-template>
+<ng-template #notSucceed>{{title}} Not Found</ng-template>
+<ng-template #noDataFound><div class="card-content">No data found</div></ng-template>

@@ -1,0 +1,261 @@
+
+
+<!--<input [matDatepicker]="myDatepicker">-->
+<!--<mat-datepicker-toggle [for]="myDatepicker"></mat-datepicker-toggle>-->
+<!--<mat-datepicker #myDatepicker></mat-datepicker>-->
+
+
+<div class="form-group " style="position:relative;">
+
+    <!--<ion-item no-padding="" [hidden]="rowBaseForms.isHidden===true || rowBaseForms.isReadOnly " (click)="rowBaseForms.ionItemClickListener.next(this.finalModel)" [ngClass]='{"ionItemIsReadOnly":rowBaseForms.isReadOnly}' >-->
+
+    <label *ngIf="baseForm.label != ''" [hidden]="baseForm.isHidden" [ngClass]="{'required':baseForm.rules.isRequired && !baseForm.isReadOnly}" class="control-label" [for]="baseForm.name">{{baseForm.label | ucWord}} </label>
+
+
+    <input
+            [hidden]="!baseForm.isReadOnly  || this.inputType == 'autocomplete'"
+            [disabled]="baseForm.isDisabled"
+            [value]="baseForm.getReadOnlyValue()"
+            type="text"
+            [name]="baseForm.name"
+            [placeholder]="baseForm.placeholder || ''"
+            [readonly]="true"
+            (focus)="onFieldClicked(ionInputModel)"
+            class="form-control readOnlyInput"
+            [title]="baseForm.title"
+    >
+
+    <!--&lt;!&ndash;<span *ngIf="rowBaseForms.type=='text';then ionInput else ionSelect"></span>&ndash;&gt;-->
+
+    <!--&lt;!&ndash;only fordisplay&ndash;&gt;-->
+    <!--&lt;!&ndash;<ion-input&ndash;&gt;-->
+    <!--&lt;!&ndash;type="text"&ndash;&gt;-->
+    <!--&lt;!&ndash;[(ngModel)] = "rowBaseForms.value"&ndash;&gt;-->
+    <!--&lt;!&ndash;&gt;&ndash;&gt;-->
+    <!--&lt;!&ndash;  </ion-input>-->
+    <!--&ndash;&gt;-->
+
+    <!--this.inputType!='textarea' || rowBaseForms.isReadOnly-->
+    <textarea
+            [hidden]="this.inputType!='textarea' || baseForm.isReadOnly || baseForm.isHidden"
+            [disabled]="baseForm.isDisabled"
+            [(ngModel)]="baseForm.value"
+            #ionTextareaModel="ngModel"
+
+            [name]="baseForm.name"
+            [placeholder]="baseForm.placeholder || ''"
+            [required]="baseForm.rules.isRequired && this.inputType !='file' && !baseForm.isReadOnly"
+            [minlength]="baseForm.rules.minlength"
+            [maxlength]="baseForm.rules.maxlength"
+            [pattern]="baseForm.rules.pattern"
+            [readonly]="baseForm.isReadOnly"
+
+            (change)="broadcast('iontextarea')"
+
+            (focus)="onFieldClicked(ionTextareaModel)"
+            class="form-control"
+            [title]="baseForm.title"
+    ></textarea>
+
+
+    <input
+            [hidden]="this.inputType == 'autocomplete' || this.inputType=='select' || this.inputType=='radio'  ||  this.inputType == 'textarea' || baseForm.isReadOnly  || baseForm.isHidden"
+            [disabled]="baseForm.isDisabled"
+            [(ngModel)]="this.baseForm.value"
+            #ionInputModel="ngModel"
+            [type]="this.inputType"
+            [name]="baseForm.name"
+            [placeholder]="baseForm.placeholder || ''"
+            [required]="baseForm.rules.isRequired && this.inputType !='file' && !baseForm.isReadOnly"
+            [minlength]="baseForm.rules.minlength"
+            [maxlength]="baseForm.rules.maxlength"
+            [pattern]="baseForm.rules.pattern"
+            [readonly]="baseForm.isReadOnly"
+            [max]="baseForm.rules.max"
+            [min]="baseForm.rules.min"
+            (change)="broadcast('ioninput', $event)"
+            (focus)="onFieldClicked(ionInputModel)"
+            class="form-control"
+            [title]="baseForm.title"
+            id="myInput"
+
+    >
+
+
+    <input
+            #autoCompleteInput="ngModel"
+            [(ngModel)]="this.baseForm.autoCompleteOption.searchValue"
+            [hidden]="this.inputType != 'autocomplete' || baseForm.isHidden"
+            [disabled]="baseForm.isDisabled"
+            [type]="text"
+            [placeholder]="baseForm.placeholder || ''"
+            [minlength]="baseForm.rules.minlength"
+            [maxlength]="baseForm.rules.maxlength"
+            [pattern]="baseForm.rules.pattern"
+            [readonly]="baseForm.isReadOnly"
+            [max]="baseForm.rules.max"
+            [min]="baseForm.rules.min"
+            class="form-control"
+            [ngClass]="{readOnlyInput: baseForm.isReadOnly || baseForm.isDisabled}"
+            [title]="baseForm.title"
+            (ngModelChange)="apiExecuteAutoComplete(autoCompleteInput)"
+            (blur)="cancelAutoComplete()"
+    >
+
+    <ul *ngIf="this.inputType == 'autocomplete' && baseForm.autoCompleteOption.apiList " class="searchResult animationExpandBottom">
+
+        <li style="color: tomato" (click)="cancelAutoComplete()">[X] Cancel</li>
+
+        <span *ngIf="baseForm.autoCompleteOption.apiList.length > 0 ">
+            <li *ngFor="let keyValue of baseForm.autoCompleteOption.apiList" (click)="autoCompleteSelected(keyValue)"><span [innerHtml]="(keyValue.display || keyValue.key) | keepAsHtml"></span></li>
+        </span>
+
+        <span *ngIf="baseForm.autoCompleteOption.apiList.length == 0 ">
+            <li style="color: red" (click)="cancelAutoComplete()">Not found</li>
+        </span>
+
+    </ul>
+
+
+    <select
+    [hidden]="this.inputType != 'select' || baseForm.isReadOnly  || baseForm.isHidden"
+    [(ngModel)]   = "baseForm.value"
+    #ionSelectModel="ngModel"
+    [name]        = "baseForm.name"
+
+    [required]    = "baseForm.rules.isRequired && this.inputType !='file' && !baseForm.isReadOnly"
+    [minlength]   = "baseForm.rules.minlength"
+    [maxlength]   = "baseForm.rules.maxlength"
+    [pattern]     = "baseForm.rules.pattern"
+    (change)   = "broadcast('ionselect')"
+    [disabled]    = "baseForm.isDisabled"
+    (click) = "onFieldClicked(ionSelectModel)"
+    class="form-control"
+    [title]="baseForm.title"
+    [ngClass]="{readOnlyInput: baseForm.isReadOnly || baseForm.isDisabled}"
+
+    >
+    <option  *ngFor="let option of baseForm.selectOptions" [value]="option.value">{{option.key}}</option>
+    </select>
+
+
+    <!--<ion-datetime-->
+    <!--[disabled] = "rowBaseForms.isDisabled "-->
+    <!--#ionDateModel   = "ngModel"-->
+    <!--#datetimePicker-->
+
+    <!--[hidden]        = "(this.inputType!='date' && this.inputType !='datetime') || rowBaseForms.isReadOnly"-->
+    <!--[(ngModel)]       = "rowBaseForms.value"-->
+    <!--[name]          = "rowBaseForms.name"-->
+    <!--[placeholder]   = "rowBaseForms.placeholder || ''"-->
+    <!--[required]      = "rowBaseForms.rules.isRequired  && this.inputType !='file' && !rowBaseForms.isReadOnly"-->
+    <!--[minlength]     = "rowBaseForms.rules.minlength"-->
+    <!--[maxlength]     = "rowBaseForms.rules.maxlength"-->
+    <!--[pattern]       = "rowBaseForms.rules.pattern"-->
+    <!--[displayFormat] = "rowBaseForms.dateSetting.displayFormat"-->
+    <!--[pickerFormat] = "rowBaseForms.dateSetting.displayFormat"-->
+    <!--[min]           = "rowBaseForms.dateSetting.min"-->
+    <!--[max]           = "rowBaseForms.dateSetting.max"-->
+    <!--(ionChange)   = "broadcast('iondatetime')"-->
+    <!--[hourValues] = rowBaseForms.hourValues-->
+    <!--(click) = "onFieldClicked(ionDateModel)"-->
+
+    <!--&gt;</ion-datetime>-->
+
+
+    <!--</ion-item >-->
+
+    <!--&lt;!&ndash;[required]      = "rowBaseForms.rules.isRequired "&ndash;&gt;-->
+    <!--&lt;!&ndash;ngModel="t"&ndash;&gt;-->
+
+
+    <!--&lt;!&ndash;for capturing calender clicked&ndash;&gt;-->
+    <!--<div (click) = "onFieldClicked(ionDateModel)" [ngClass]="{overrideDatepicker:this.inputType == 'date' && !this.rowBaseForms.isReadOnly}">-->
+
+    <!--</div>-->
+
+
+    <!--<ion-list #ionRadioModel="ngModel" (ionChange)="broadcast('ionradio')" [hidden]="this.inputType!='radio' || rowBaseForms.isHidden" [name]="rowBaseForms.name" radio-group [(ngModel)]="rowBaseForms.value">-->
+
+    <!--<ion-item *ngFor="let selectOption of rowBaseForms.selectOptions">-->
+    <!--<ion-label>{{selectOption.key}}</ion-label>-->
+    <!--<ion-radio checked="true"  [value]="selectOption.value"></ion-radio>-->
+    <!--</ion-item>-->
+
+
+    <!--</ion-list>-->
+
+
+    <!--<input-->
+    <!--#fileModel = "ngModel"-->
+    <!--ngModel=""-->
+    <!--[type]="this.inputType"-->
+    <!--[name]="rowBaseForms.name"-->
+    <!--[id]="rowBaseForms.name"-->
+    <!--[hidden] = "this.inputType != 'file' || rowBaseForms.isHidden === true || rowBaseForms.isReadOnly"-->
+    <!--[required] = "rowBaseForms.rules.isRequired && !rowBaseForms.isReadOnly"-->
+    <!--(change) = "rowBaseForms.broadcastNgChange($event,parentForm)"-->
+    <!--[readonly] = "rowBaseForms.isReadOnly"-->
+
+    <!--multiple-->
+    <!--accept="*/*"-->
+    <!--&gt;-->
+
+
+    <!--<div class="readOnlyInfo" [hidden] = "!baseForm.isReadOnly || baseForm.isHidden">-->
+    <!--<p class="label">{{baseForm.label | ucWord}} </p>-->
+    <!--<p class="value"   >{{baseForm.getReadOnlyValue()}}</p>-->
+    <!--</div>-->
+
+
+    <!--<open-url [hidden]="rowBaseForms.isHidden" *ngIf="rowBaseForms.attachmentInfo.isSet && rowBaseForms.attachmentInfo.name && rowBaseForms.attachmentInfo.name!=''" [name]="rowBaseForms.attachmentInfo.name" [url]="rowBaseForms.attachmentInfo.url"></open-url>-->
+
+    <!--&lt;!&ndash;&ndash;&gt;-->
+    <!--&lt;!&ndash;for display onlu&ndash;&gt;-->
+
+    <p [hidden]="baseForm.isHidden || baseForm.infoBottom == ''" class="infoBottom"  [innerHTML]="baseForm.infoBottom | keepAsHtml"></p>
+    <p [hidden]="baseForm.isHidden || !baseForm.infoFileName" class="infoBottom"  [innerHTML]="baseForm.infoFileName | keepAsHtml"></p>
+
+    <div [hidden]="baseForm.isHidden" *ngIf="finalModel">
+    <!--<span>{{debug()}}</span>-->
+    <!--<p style="text-align:left;margin-left:-0px;" class="error-container" *ngIf="!finalModel.valid && (finalModel.dirty || finalModel.touched || parentForm.submitted)" >-->
+    <p style="text-align:left;margin-left:-0px;" class="error-container" >
+    <form-error-message  [baseForm]="baseForm" [model]="finalModel"></form-error-message>
+    </p>
+    </div>
+
+
+    <div  *ngIf="this.inputType=='file'"  style="width: 65px; ;" >
+        <img src="assets/img/upload.png"  class="img-responsive" style="cursor:pointer"/>
+
+    </div>
+
+    <!--<div *ngIf="!rowBaseForms.buttonRightSuccess.isHidden || !rowBaseForms.buttonRightSuccess.isHidden" style="margin-bottom: 16px;">-->
+    <!--<button [hidden]="rowBaseForms.buttonRightSuccess.isHidden" (click)="rowBaseForms.buttonRightSuccess.clickListener.next(this.rowBaseForms)" type="button" item-right="" ion-button="" color="primary">{{rowBaseForms.buttonRightSuccess.label}}</button>-->
+    <!--<button [hidden]="rowBaseForms.buttonRightDanger.isHidden" (click)="rowBaseForms.buttonRightDanger.clickListener.next(this.rowBaseForms)" type="button" item-right="" ion-button="" color="danger">{{rowBaseForms.buttonRightDanger.label}}</button>-->
+    <!--</div>-->
+
+
+    <!--<ng-template #ionInput>-->
+
+    <!--</ng-template>-->
+
+    <!--<ng-template #ionSelect>-->
+
+    <!--</ng-template>-->
+
+    <!--&lt;!&ndash;<label >{{currentBaseForm.label}}</label>&ndash;&gt;-->
+    <!--&lt;!&ndash;<input&ndash;&gt;-->
+    <!--&lt;!&ndash;ngModel="" #model="ngModel"&ndash;&gt;-->
+    <!--&lt;!&ndash;[name]        = "currentBaseForm.name"&ndash;&gt;-->
+    <!--&lt;!&ndash;[value]       = "currentBaseForm.value || ''"&ndash;&gt;-->
+    <!--&lt;!&ndash;[placeholder] = "currentBaseForm.placeholder || ''"&ndash;&gt;-->
+    <!--&lt;!&ndash;[isRequired]    = "currentBaseForm.rules.isRequired"&ndash;&gt;-->
+    <!--&lt;!&ndash;[minlength]   = "currentBaseForm.rules.minlength"&ndash;&gt;-->
+    <!--&lt;!&ndash;[maxlength]   = "currentBaseForm.rules.maxlength"&ndash;&gt;-->
+    <!--&lt;!&ndash;[pattern]     = "currentBaseForm.rules.pattern"&ndash;&gt;-->
+    <!--&lt;!&ndash;/>&ndash;&gt;-->
+
+    <!--&lt;!&ndash;<button (click)="showCalendar()">Show Calendar</button>&ndash;&gt;-->
+
+</div>
