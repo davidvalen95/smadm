@@ -129,19 +129,23 @@
                         <tr>
                             <th>No</th>
                             <th>Date</th>
-                            <th>Sumber penilaian</th>
+                            <th>Origin reporter</th>
+                            <th>Last editor</th>
                             <th>Description</th>
+                            <th>status</th>
 
 
                             <!--<th>Action</th>-->
                         </tr>
                         </thead>
                         <tbody >
-                        <tr appMarkClicked="" *ngFor="let data of top.data.user.get_me_as_pupil_scores; let i = index" >
+                        <tr data-toggle="modal" data-target="#modal" (click)="presentModal('giveScore',data)" appMarkClicked="" *ngFor="let data of top.data.user.get_me_as_pupil_scores; let i = index" >
                             <td>{{i + 1}}</td>
                             <td>{{helperService.getReadableDate(data.created_at)}}</td>
                             <td><a [routerLink]="['/profile',{id:data.get_teacher.id}]">{{data.get_teacher.name}}</a></td>
+                            <td><a *ngIf="data.get_last_editor_user" [routerLink]="['/profile',{id:data.get_last_editor_user.id}]">{{data.get_last_editor_user.name}}</a></td>
                             <td>{{data.description}}</td>
+                            <td><span *ngIf="data.get_select_score_status">{{data.get_select_score_status.key}}</span></td>
                         </tr>
 
                         </tbody>

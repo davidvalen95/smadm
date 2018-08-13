@@ -10,25 +10,29 @@ import {ModalInterface} from '../../../../app.component';
 import {ActivatedRoute} from '@angular/router';
 import {BranchDetailTopInterface, BranchInterface, BranchUserInterface} from '../BranchApiInterface';
 
+declare const $: any;
+
 @Component({
-  selector: 'app-branch-detail',
-  templateUrl: './branch-detail.component.html',
-  styleUrls: ['./branch-detail.component.scss']
+    selector: 'app-branch-detail',
+    templateUrl: './branch-detail.component.html',
+    styleUrls: ['./branch-detail.component.scss']
 })
+
+
 export class BranchDetailComponent implements OnInit {
 
     public param: BranchDetailParamInterface = {};
-    public top: BranchDetailTopInterface = {isSuccess:false, message:""};
+    public top: BranchDetailTopInterface = {isSuccess: false, message: ''};
 
     public isCanEditProfile: boolean = false;
     public isCanAddTeacher: boolean = false;
     public isCanAddPupil: boolean = false;
-    title:string = 'branch';
+    title: string = 'branch';
 
     public rowBaseForms: RowFloatingInputInterface[] = []
     public formValueContainer = {};
-    public modalData:ModalInterface<any> = {
-        title: "Apply form",
+    public modalData: ModalInterface<any> = {
+        title: 'Apply form',
         baseForms: [],
         buttons: [],
     }
@@ -55,16 +59,14 @@ export class BranchDetailComponent implements OnInit {
     }
 
 
-
     ngOnInit() {
     }
 
-    public topInit(){
+    public topInit() {
         this.apiExecuteGetTop(() => {
 
             this.setupButtonLogic();
             this.setupForm();
-
 
 
             this.teacherActiveForms = [];
@@ -73,16 +75,33 @@ export class BranchDetailComponent implements OnInit {
             this.teacherClassForms = [];
 
 
-            this.top.data.branch.get_users_as_teacher.forEach((current)=>{
+            this.top.data.branch.get_users_as_teacher.forEach((current) => {
 
-                this.setupBranchUserForm(current,'teacher');
-
-            });
-            this.top.data.branch.get_users_as_pupil.forEach((current)=>{
-
-                this.setupBranchUserForm(current,'pupil');
+                this.setupBranchUserForm(current, 'teacher');
 
             });
+            this.top.data.branch.get_users_as_pupil.forEach((current) => {
+
+                this.setupBranchUserForm(current, 'pupil');
+
+            });
+
+
+            var title = 'Pupil data for ' + this.top.data.branch.name
+            // $(document).ready(function () {
+            //     $('table').DataTable({
+            //         dom: 'Bfrtip',
+            //         paging: false,
+            //         buttons: [],
+            //         sort: false,
+            //
+            //         "bDestroy": true
+            //
+            //     });
+            //     // $('table').dataTable().fnDestroy();
+            //     // $('table').dataTable().fnDestroy();
+            //
+            // });
 
 
         });
@@ -105,61 +124,58 @@ export class BranchDetailComponent implements OnInit {
         this.formValueContainer = {};
 
 
-        var name = new BaseForm("Name", 'name');
+        var name = new BaseForm('Name', 'name');
         name.value = this.top.data.branch.name;
         name.classDisplay = 'col-xs-6';
-        var address = new BaseForm("address", 'address');
+        var address = new BaseForm('address', 'address');
         address.value = this.top.data.branch.address;
         address.classDisplay = 'col-xs-6';
 
-        var head = new BaseForm('Head Branch' , 'head');
+        var head = new BaseForm('Head Branch', 'head');
         head.classDisplay = 'col-xs-12';
-        var config:ApiConfigInterface = {
-            url: ApiService.BASE_API_URL + "user/auto-complete",
+        var config: ApiConfigInterface = {
+            url: ApiService.BASE_API_URL + 'user/auto-complete',
             params: {
                 previledge: {selector: '!=', value: 'pupil'}
             }
         }
         head.setIsRequired(false);
         head.setInputTypeAutoComplete(config);
-        head.infoBottom = "Kepala sekolah minggu";
-        if(this.top.data.branch && this.top.data.branch.get_head){
-            head.setAutoCompleteValue( {key:this.top.data.branch.get_head.name, value: this.top.data.branch.get_head.id});
+        head.infoBottom = 'Kepala sekolah minggu';
+        if (this.top.data.branch && this.top.data.branch.get_head) {
+            head.setAutoCompleteValue({key: this.top.data.branch.get_head.name, value: this.top.data.branch.get_head.id});
 
         }
 
 
-        var owner = new BaseForm('owner' , 'owner');
+        var owner = new BaseForm('owner', 'owner');
         owner.classDisplay = 'col-xs-12';
-        var config:ApiConfigInterface = {
-            url: ApiService.BASE_API_URL + "user/auto-complete",
+        var config: ApiConfigInterface = {
+            url: ApiService.BASE_API_URL + 'user/auto-complete',
             params: {
                 previledge: {selector: '!=', value: 'pupil'}
             }
         }
         owner.setIsRequired(false);
         owner.setInputTypeAutoComplete(config);
-        owner.infoBottom = "Pemilik rumah";
-        if( this.top.data.branch && this.top.data.branch.get_owner){
-            owner.setAutoCompleteValue({key:this.top.data.branch.get_owner.name, value: this.top.data.branch.get_owner.id});
+        owner.infoBottom = 'Pemilik rumah';
+        if (this.top.data.branch && this.top.data.branch.get_owner) {
+            owner.setAutoCompleteValue({key: this.top.data.branch.get_owner.name, value: this.top.data.branch.get_owner.id});
         }
 
 
+        this.rowBaseForms.push({baseForms: [name, address, owner, head]})
 
-        this.rowBaseForms.push({baseForms: [name,address, owner, head]})
-        
 
         this.setEditableForm();
     }
 
 
-
-
-    public setEditableForm(){
+    public setEditableForm() {
         console.log('setEditable', this.isCanEditProfile, this.rowBaseForms, this.top);
-        this.rowBaseForms.forEach(rowBaseForm=>{
-            rowBaseForm.baseForms.forEach(baseForm=>{
-                if(!baseForm.isReadOnly){
+        this.rowBaseForms.forEach(rowBaseForm => {
+            rowBaseForm.baseForms.forEach(baseForm => {
+                if (!baseForm.isReadOnly) {
                     baseForm.setIsReadOnly(!this.isCanEditProfile);
                 }
             })
@@ -170,7 +186,7 @@ export class BranchDetailComponent implements OnInit {
 
         var config: ApiConfigInterface = {
             url: `${ApiService.BASE_API_URL}branch/top`,
-            params: {id: this.param.id, cmd:'detail'},
+            params: {id: this.param.id, cmd: 'detail'},
         }
         this.apiService.get<BranchDetailTopInterface>(config, (data: BranchDetailTopInterface) => {
             console.log('top', data);
@@ -193,12 +209,13 @@ export class BranchDetailComponent implements OnInit {
             this.formValueContainer['cmd'] = 'edit';
 
 
-            this.formValueContainer = this.helperService.mergeObject(form.value,this.formValueContainer);
+            this.formValueContainer = this.helperService.mergeObject(form.value, this.formValueContainer);
 
             this.helperService.presentConfirmation({}, (isConfirmed) => {
-                    if(isConfirmed) {
-                        this.apiExecuteSubmitForm(this.formValueContainer)
-                    }
+
+                if (isConfirmed) {
+                    this.apiExecuteSubmitForm(this.formValueContainer)
+                }
             })
         } else {
             this.helperService.presentAlert({message: 'Form is not valid please check again'});
@@ -207,15 +224,15 @@ export class BranchDetailComponent implements OnInit {
 
     }
 
-    public apiExecuteSubmitForm(json:any) {
+    public apiExecuteSubmitForm(json: any) {
 
-        var url:string = ApiService.BASE_API_URL + "branch/op";
-        var config:ApiConfigInterface = {
+        var url: string = ApiService.BASE_API_URL + 'branch/op';
+        var config: ApiConfigInterface = {
             url: url,
             params: json,
         }
-        this.apiService.post<ApiBaseResponseInterface>(config,(data)=>{
-            if(data.isSuccess){
+        this.apiService.post<ApiBaseResponseInterface>(config, (data) => {
+            if (data.isSuccess) {
                 this.helperService.closeModal();
                 this.topInit();
 
@@ -223,14 +240,13 @@ export class BranchDetailComponent implements OnInit {
         });
 
 
-
     }
 
 
-    presentModal(type:string) {
+    presentModal(type: string) {
         // this.setForm();
 
-        if(type =='pupil' || type =='teacher'){
+        if (type == 'pupil' || type == 'teacher') {
             this.setupFindUserForm(type)
         }
 
@@ -238,28 +254,24 @@ export class BranchDetailComponent implements OnInit {
     }
 
 
-
-
-
-    private setupFindUserForm(type){
+    private setupFindUserForm(type) {
         this.modalData.baseForms = [];
         this.modalData.buttons = [];
         this.formValueContainer = {};
 
-        var user :UserDataInterface = null;
-        var findUser = new BaseForm('Find User' , 'findUser');
+        var user: UserDataInterface = null;
+        var findUser = new BaseForm('Find User', 'findUser');
         findUser.classDisplay = 'col-xs-12';
-        var config:ApiConfigInterface = {
-            url: ApiService.BASE_API_URL + "user/auto-complete",
-            params: {
-            }
+        var config: ApiConfigInterface = {
+            url: ApiService.BASE_API_URL + 'user/auto-complete',
+            params: {}
         }
         // findUser.setIsRequired(false);
         findUser.setInputTypeAutoComplete(config);
-        findUser.changeListener.subscribe(baseForm=>{
+        findUser.changeListener.subscribe(baseForm => {
             console.log('findUser', baseForm.value);
 
-            UserService.apiExecuteGetUserById(baseForm.value, (userDetailData)=>{
+            UserService.apiExecuteGetUserById(baseForm.value, (userDetailData) => {
                 console.log('userDetailData', userDetailData);
                 email.setValue(userDetailData.email);
                 name.setValue(userDetailData.name);
@@ -276,36 +288,32 @@ export class BranchDetailComponent implements OnInit {
         selectClass.setInputTypeSelect(this.top.data.selectClass);
 
 
-
         var email = new BaseForm('Email', 'email');
         email.setIsRequired(false);
         email.setIsReadOnly(true);
 
 
-
-        var name = new BaseForm('Name' , 'name');
+        var name = new BaseForm('Name', 'name');
         name.classDisplay = 'col-xs-6';
         name.setIsRequired(false);
         name.setIsReadOnly(true);
 
-        var nbg = new BaseForm('NBG' , 'nbg');
+        var nbg = new BaseForm('NBG', 'nbg');
         nbg.setIsRequired(false);
         nbg.setIsReadOnly(true);
         nbg.classDisplay = 'col-xs-6';
 
 
-        var address = new BaseForm('Address' , 'address');
+        var address = new BaseForm('Address', 'address');
         address.classDisplay = 'col-xs-6';
         address.setIsRequired(false);
         address.setIsReadOnly(true);
 
 
-        var phone = new BaseForm('Phone','phone');
+        var phone = new BaseForm('Phone', 'phone');
         phone.classDisplay = 'col-xs-6';
         phone.setIsRequired(false);
         phone.setIsReadOnly(true);
-
-
 
 
         var birthDate = new BaseForm('Birth Date / Tanggal Lahir', 'birthDate');
@@ -314,21 +322,21 @@ export class BranchDetailComponent implements OnInit {
         birthDate.setIsReadOnly(true);
 
 
-        if(type =='pupil'){
+        if (type == 'pupil') {
             this.modalData.title = `Add new pupil / Tambah murid baru`;
         }
-        if(type =='teacher'){
+        if (type == 'teacher') {
             this.modalData.title = `Add new teacher / Tambah guru baru`;
         }
 
         this.modalData.baseForms = [{
-            baseForms:[findUser,selectClass,  email, name, nbg,address,phone ,birthDate,]
+            baseForms: [findUser, selectClass, email, name, nbg, address, phone, birthDate,]
         }];
 
         this.modalData.buttons.push({
             class: 'btn btn-success',
-            text: "Submit",
-            onClick: ()=>{
+            text: 'Submit',
+            onClick: () => {
                 this.apiExecuteSubmitNewUserToBranch(user, type, selectClass.value);
             }
         })
@@ -347,11 +355,10 @@ export class BranchDetailComponent implements OnInit {
     }
 
 
-
-    public apiExecuteSubmitNewUserToBranch(user:UserDataInterface, role:'teacher' | 'pupil', selectClass){
+    public apiExecuteSubmitNewUserToBranch(user: UserDataInterface, role: 'teacher' | 'pupil', selectClass) {
 
         var config: ApiConfigInterface = {
-            url : ApiService.BASE_API_URL + "branch/op",
+            url: ApiService.BASE_API_URL + 'branch/op',
             params: {
                 cmd: 'addUserToBranch',
                 id: user.id,
@@ -361,7 +368,7 @@ export class BranchDetailComponent implements OnInit {
             }
         }
 
-        this.apiService.post(config,(response)=>{
+        this.apiService.post(config, (response) => {
 
 
             this.topInit();
@@ -371,15 +378,15 @@ export class BranchDetailComponent implements OnInit {
     }
 
 
-    private submitScoreForm(form:NgForm){
+    private submitScoreForm(form: NgForm) {
 
         if (form.valid) {
             this.formValueContainer['id'] = this.top.data.branch.id
             this.formValueContainer['cmd'] = 'giveScore',
 
-                this.formValueContainer = this.helperService.mergeObject(form.value,this.formValueContainer);
+                this.formValueContainer = this.helperService.mergeObject(form.value, this.formValueContainer);
             this.helperService.presentConfirmation({}, (isConfirmed) => {
-                if(isConfirmed) {
+                if (isConfirmed) {
                     this.apiExecuteSubmitForm(this.formValueContainer)
                 }
             })
@@ -391,24 +398,24 @@ export class BranchDetailComponent implements OnInit {
     }
 
 
-    public setupBranchUserForm(branchUser:BranchUserInterface, role:'teacher' | 'pupil'){
+    public setupBranchUserForm(branchUser: BranchUserInterface, role: 'teacher' | 'pupil') {
 
         var isCannotAdd = role == 'teacher' ? !this.top.data.isCanAddTeacher : !this.top.data.isCanEditPupil;
 
-        var activeForm = new BaseForm("","isActive");
-        activeForm.value = "" + branchUser.isActive;
-        activeForm.setInputTypeSelectTrueFalse("Aktif", "Non-Aktif");
+        var activeForm = new BaseForm('', 'isActive');
+        activeForm.value = '' + branchUser.isActive;
+        activeForm.setInputTypeSelectTrueFalse('Aktif', 'Non-Aktif');
         activeForm.setIsReadOnly(isCannotAdd);
 
         var activeOldValue = activeForm.value;
-        activeForm.changeListener.subscribe(data=>{
+        activeForm.changeListener.subscribe(data => {
 
-            this.helperService.presentConfirmation({message: "Ubah keaktifan dari " + branchUser.get_user.name},(isConfirmed)=>{
-                if(isConfirmed){
+            this.helperService.presentConfirmation({message: 'Ubah keaktifan dari ' + branchUser.get_user.name}, (isConfirmed) => {
+                if (isConfirmed) {
 
-                    this.apiExecuteChangeActiveStatus(branchUser,activeForm);
+                    this.apiExecuteChangeActiveStatus(branchUser, activeForm);
                     activeOldValue = data.value;
-                }else{
+                } else {
                     data.value = activeOldValue;
                 }
             });
@@ -416,21 +423,20 @@ export class BranchDetailComponent implements OnInit {
         });
 
 
-
-        var classForm = new BaseForm("","class");
-        classForm.value = "" + branchUser.get_class.value;
+        var classForm = new BaseForm('', 'class');
+        classForm.value = '' + branchUser.get_class.value;
         classForm.setInputTypeSelect(this.top.data.selectClass, false);
         classForm.setIsReadOnly(isCannotAdd || !branchUser.isActive);
 
         var classOldValue = classForm.value;
-        classForm.changeListener.subscribe(data=>{
+        classForm.changeListener.subscribe(data => {
 
-            this.helperService.presentConfirmation({message: "Ubah kelas dari " + branchUser.get_user.name},(isConfirmed)=>{
-                if(isConfirmed){
+            this.helperService.presentConfirmation({message: 'Ubah kelas dari ' + branchUser.get_user.name}, (isConfirmed) => {
+                if (isConfirmed) {
 
-                    this.apiExecuteChangeClass(branchUser,classForm);
+                    this.apiExecuteChangeClass(branchUser, classForm);
                     classOldValue = data.value;
-                }else{
+                } else {
                     data.value = classOldValue;
                 }
             });
@@ -438,19 +444,18 @@ export class BranchDetailComponent implements OnInit {
         });
 
 
-
-        var rowFloatingForm:RowFloatingInputInterface[] = [{
+        var rowFloatingForm: RowFloatingInputInterface[] = [{
             baseForms: [activeForm],
         }]
         var classFloatingForm: RowFloatingInputInterface[] = [{
             baseForms: [classForm],
         }];
 
-        if(role =='teacher'){
+        if (role == 'teacher') {
             this.teacherActiveForms.push(rowFloatingForm);
             this.teacherClassForms.push(classFloatingForm);
         }
-        if(role =='pupil'){
+        if (role == 'pupil') {
             this.pupilActiveForms.push(rowFloatingForm);
             this.pupilClassForms.push(classFloatingForm);
         }
@@ -458,12 +463,11 @@ export class BranchDetailComponent implements OnInit {
 
     }
 
-    public apiExecuteChangeActiveStatus(branchUser: BranchUserInterface, form:BaseForm){
+    public apiExecuteChangeActiveStatus(branchUser: BranchUserInterface, form: BaseForm) {
 
 
-
-        var url:string = ApiService.BASE_API_URL + "branch/op";
-        var config:ApiConfigInterface = {
+        var url: string = ApiService.BASE_API_URL + 'branch/op';
+        var config: ApiConfigInterface = {
             url: url,
             params: {
                 id: branchUser.id,
@@ -471,22 +475,21 @@ export class BranchDetailComponent implements OnInit {
                 cmd: 'changeActiveStatus',
             },
         }
-        this.apiService.post<ApiBaseResponseInterface>(config,(data)=>{
-            if(data.isSuccess){
+        this.apiService.post<ApiBaseResponseInterface>(config, (data) => {
+            if (data.isSuccess) {
                 // this.helperService.closeModal();
                 this.topInit();
             }
         });
 
 
-
     }
-    public apiExecuteAdvanceClass(branch:BranchInterface){
+
+    public apiExecuteAdvanceClass(branch: BranchInterface) {
 
 
-
-        var url:string = ApiService.BASE_API_URL + "branch/op";
-        var config:ApiConfigInterface = {
+        var url: string = ApiService.BASE_API_URL + 'branch/op';
+        var config: ApiConfigInterface = {
             url: url,
             params: {
                 id: branch.id,
@@ -494,27 +497,27 @@ export class BranchDetailComponent implements OnInit {
             },
         }
 
-        this.helperService.presentConfirmation({message: "Are you sure to advance all pupil class? Don't continue if you not sure"},(isConfirmed)=>{
-            this.apiService.post<ApiBaseResponseInterface>(config,(data)=>{
-                if(data.isSuccess){
-                    // this.helperService.closeModal();
-                    this.topInit();
-                }
-            });
+        this.helperService.presentConfirmation({message: 'Are you sure to advance all pupil class? Don\'t continue if you not sure'}, (isConfirmed) => {
+            if (isConfirmed) {
+
+                this.apiService.post<ApiBaseResponseInterface>(config, (data) => {
+                    if (data.isSuccess) {
+                        // this.helperService.closeModal();
+                        this.topInit();
+                    }
+                });
+            }
         });
-
-
 
 
     }
 
 
-    public apiExecuteChangeClass(branchUser: BranchUserInterface, form:BaseForm){
+    public apiExecuteChangeClass(branchUser: BranchUserInterface, form: BaseForm) {
 
 
-
-        var url:string = ApiService.BASE_API_URL + "branch/op";
-        var config:ApiConfigInterface = {
+        var url: string = ApiService.BASE_API_URL + 'branch/op';
+        var config: ApiConfigInterface = {
             url: url,
             params: {
                 id: branchUser.id,
@@ -522,17 +525,15 @@ export class BranchDetailComponent implements OnInit {
                 cmd: 'changeClass',
             },
         }
-        this.apiService.post<ApiBaseResponseInterface>(config,(data)=>{
-            if(data.isSuccess){
+        this.apiService.post<ApiBaseResponseInterface>(config, (data) => {
+            if (data.isSuccess) {
                 // this.helperService.closeModal();
                 this.topInit();
             }
         });
 
 
-
     }
-
 
 
 }

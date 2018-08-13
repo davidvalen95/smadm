@@ -46,6 +46,15 @@ export class SidebarComponent implements OnInit {
     ngOnInit() {
         this.sideMenu = ROUTES.filter(menuItem => menuItem);
         this.sideMenu[1].param = {id: this.userService.userData.id};
+
+        if(this.userService.userData.get_previledge.value == "master"){
+            this.sideMenu.push(
+                {
+                    path: 'branch/configure/web', title: 'Configure Master Web', icon: 'library_books', class: '', param: {id: -1}
+                },
+            )
+        }
+        // if(this.userService.userData.get_previledge);
     }
 
     isMobileMenu() {

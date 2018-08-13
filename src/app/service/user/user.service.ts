@@ -35,9 +35,9 @@ export class UserService {
         return id == this.userData.id;
     }
 
-    public apiExecuteLogin(email: string, password: string, ) {
+    public apiExecuteLogin(nbg: string, password: string, ) {
         var url = `${ApiService.BASE_API_URL}user/login`;
-        var params = {email: email, password: password};
+        var params = {nbg: nbg, password: password};
 
         var config: ApiConfigInterface = {
             url:url,
@@ -51,7 +51,7 @@ export class UserService {
                 this.userData = response.data.user;
                 this.token = response.data.token;
                 this.isLoggedIn = true;
-                this.localStorage.setEmail(email);
+                this.localStorage.setEmail(nbg);
                 this.localStorage.setPassword(password);
                 //this.helperService.presentNotification(`Welcome back ${response.data.allUser.name}`);
                 console.log('userLoggedIn',this);
@@ -136,6 +136,10 @@ export class UserDataInterface{
     address:string = "";
     created_at:string = "";
     nbg:string = "";
+    father:string;
+    fatherPhone:string;
+    mother:string;
+    motherPhone:string;
 
     get_previledge? : PreviledgeInterface = {key:"", value:""};
     get_photo?: PhotosDataInterface;
@@ -148,19 +152,30 @@ export class UserDataInterface{
     get_me_as_teacher_scores?: ScoreInterface[];
 
 
+    //#for absence
+    isAbsenceBarcode?:boolean;
+    barcodeDate?:string;
 }
 
 export interface PhotosDataInterface{
+    id:number;
     path:string;
     nameSm:string;
     nameLg:string;
+    type: number;
+    youtubeLink:string;
 }
+
+
 
 export interface ScoreInterface{
     created_at:string;
+    id:number;
     description:string;
     get_pupil:UserDataInterface;
     get_teacher:UserDataInterface;
+    get_select_score_status:KeyValueInterface;
+    get_last_editor_user:UserDataInterface;
 }
 export interface PreviledgeInterface extends KeyValueInterface{
 

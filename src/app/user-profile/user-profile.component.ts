@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {ApiBaseResponseInterface, ApiConfigInterface, ApiService} from '../service/api/api.service';
-import {UserDataInterface, UserService} from '../service/user/user.service';
+import {ScoreInterface, UserDataInterface, UserService} from '../service/user/user.service';
 import {ProfileTopInterface, UserHistoryInterface} from '../page/profile/ProfileApiInterface';
 import {BaseForm, InputType} from '../components/floating-input/BaseForm';
 import {RowFloatingInputInterface} from '../components/floating-input/row-floating-input/row-floating-input.component';
@@ -118,12 +118,37 @@ export class UserProfileComponent implements OnInit {
 
         var profilePicture:BaseForm = new BaseForm("Change photo", 'photo');
         profilePicture.setIsRequired(false);
-        profilePicture.setInputTypeFile(this.formValueContainer);
+        profilePicture.setInputTypeFile({formContainer:this.formValueContainer});
 
 
 
 
-        this.rowBaseForms.push({baseForms: [email, password, passwordConfirmation, address, phone, birthDate, profilePicture]})
+        var fatherName = new BaseForm('Father Name', 'father');
+        fatherName.classDisplay = 'col-xs-6';
+        fatherName.setIsRequired(false);
+        fatherName.value = this.top.data.user.father;
+
+        var fatherPhone = new BaseForm('Father phone', 'fatherPhone');
+        fatherPhone.classDisplay = 'col-xs-6';
+        fatherPhone.setIsRequired(false);
+        fatherPhone.value = this.top.data.user.fatherPhone;
+
+
+        var motherName = new BaseForm('mother Name', 'mother');
+        motherName.classDisplay = 'col-xs-6';
+        motherName.setIsRequired(false);
+        motherName.value = this.top.data.user.mother;
+
+
+        var motherPhone = new BaseForm('mother phone', 'motherPhone');
+        motherPhone.classDisplay = 'col-xs-6';
+        motherPhone.setIsRequired(false);
+        motherPhone.value = this.top.data.user.motherPhone;
+
+
+
+
+        this.rowBaseForms.push({baseForms: [email, password, passwordConfirmation, address, phone, birthDate,fatherName,fatherPhone,motherName,motherPhone, profilePicture]})
 
 
         this.setEditableForm();
@@ -196,44 +221,58 @@ export class UserProfileComponent implements OnInit {
     }
 
 
-    presentModal(type:string) {
+    presentModal(type:string, data?:any) {
         // this.setForm();
 
         if(type=='giveScore'){
-            this.setupScoreForm();
+            this.setupScoreForm(data);
         }
 
 
     }
 
-    private setupScoreForm(){
+    private setupScoreForm(score:ScoreInterface){
+
         this.modalData.baseForms = [];
         this.modalData.buttons = [];
         this.modalData.title = `Penilaian terhadap  ${this.top.data.user.name}`
 
         var description = new BaseForm("Description / Penilaian", 'score');
         description.setInputTypeTextarea();
-        description.infoBottom = "<p><span style='color:tomato;font-weight: bold;'>* </span>Beri penilaian terhadap murid sebagai track record murid dalam arsip. Penilaian terhadap murid akan sangat membantu mengawasi perkembangan murid tersebut</p>" +
+
+        var status = new BaseForm("Status", "selectScoreStatus" );
+        status.setInputTypeSelect(this.top.data.selectScoreStatus);
+        status.infoBottom = "<p><span style='color:tomato;font-weight: bold;'>* </span>Beri penilaian terhadap murid sebagai track record murid dalam arsip. Penilaian terhadap murid akan sangat membantu mengawasi perkembangan murid tersebut</p>" +
             "<p><span style='color:tomato;font-weight: bold;'>* </span>Hanya guru-guru dari sekolah minggu yang dapat melihat penilaian track record murid untuk menjaga rahasia pelayanan</p>"
 
+
+        if(score){
+            description.value = score.description;
+            if(score.get_select_score_status){
+                status.value = score.get_select_score_status.value;
+
+            }
+        }
+
         this.modalData.baseForms = [{
-            baseForms:[description]
+            baseForms:[description, status]
         }]
         this.modalData.buttons.push({
             text: "Submit",
             class: "btn btn-success",
             onClick: (form:NgForm)=>{
-                this.submitScoreForm(form);
+                this.submitScoreForm(form,score);
             }
         })
 
         // this.modalData
     }
-    private submitScoreForm(form:NgForm){
+    private submitScoreForm(form:NgForm,score?:ScoreInterface){
 
         if (form.valid) {
             this.formValueContainer['id'] = this.top.data.user.id
             this.formValueContainer['cmd'] = 'giveScore',
+            this.formValueContainer['scoreId'] = score.id || -1,
 
             this.formValueContainer = this.helperService.mergeObject(form.value,this.formValueContainer);
             this.helperService.presentConfirmation({}, (isConfirmed) => {

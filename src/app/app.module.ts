@@ -34,6 +34,10 @@ import { AbsenceListComponent } from './page/module/absence/absence-list/absence
 import {HashLocationStrategy, LocationStrategy} from '@angular/common';
 import { ThreadListComponent } from './page/thread/thread-list/thread-list.component';
 import { ThreadDetailComponent } from './page/thread/thread-detail/thread-detail.component';
+import { ConfigureBranchDetailComponent } from './page/module/configure-branch/configure-branch-detail/configure-branch-detail.component';
+import {DataTablesModule} from 'angular-datatables';
+import { AbsenceBarcodeComponent } from './page/absence-barcode/absence-barcode.component';
+import { AutofocusDirective } from './directive/autofocus/autofocus.directive';
 
 
 @NgModule({
@@ -55,6 +59,8 @@ import { ThreadDetailComponent } from './page/thread/thread-detail/thread-detail
         AbsenceListComponent,
         ThreadListComponent,
         ThreadDetailComponent,
+        ConfigureBranchDetailComponent,
+        AbsenceBarcodeComponent,
 
 
 
@@ -71,6 +77,7 @@ import { ThreadDetailComponent } from './page/thread/thread-detail/thread-detail
         PipeModule,
         DirectiveModule,
         ...AppModule.module,
+
 
     ],
     providers: [

@@ -11,7 +11,7 @@ export interface AbsenceListTopInterface extends ApiBaseResponseInterface{
         isCanAbsence:boolean ;
         userAbsenceRecords: ApiPaginationResponseInterface<UserAbsenceRecordInterface>;
         absenceDatesNotDone: AbsenceDateInterface[];
-        absenceDateRecords: AbsenceDateInterface[];
+        absenceDateRecords: AbsenceDateInterface[][];
     };
 }
 
@@ -30,6 +30,7 @@ export interface AbsenceBranchInterface{
 
     id:number;
     isDone:boolean;
+    isPupil:boolean;
 
     get_select_class:KeyValueInterface;
     get_branch:BranchInterface;
@@ -42,6 +43,7 @@ export interface AbsenceBranchInterface{
 
 export interface AbsenceDateInterface{
     created_date:string;
+    id:number;
     targetDate:string;
     get_absence_branches: AbsenceBranchInterface[];
 
@@ -49,4 +51,15 @@ export interface AbsenceDateInterface{
     totalAbsence?: number;
     totalPupil?: number;
     notYetFollowedUp?:number;
+
+    branches: BranchForSummaryInterface[];
+}
+
+export interface BranchForSummaryInterface extends  BranchInterface{
+    totalAbsence: number;
+    totalNotDone: number;
+    totalPupil: number;
+    availablePercentage: number;
+    notYetFollowedUp:number;
+    isPupil:boolean;
 }

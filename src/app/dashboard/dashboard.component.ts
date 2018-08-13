@@ -9,12 +9,20 @@ import {RowFloatingInputInterface} from '../components/floating-input/row-floati
 import {BaseForm} from '../components/floating-input/BaseForm';
 import {ModalInterface} from '../app.component';
 import {NgForm} from '@angular/forms';
+import {AbsenceDateInterface} from '../page/module/absence/AbsenceApiInterface';
 
+// import * as $ from 'jquery';
+//
+// import * as datatable from 'datatables.net-dt';
+// require( 'datatables.net-dt' )();
+declare var $: any;
 @Component({
     selector: 'app-dashboard',
     templateUrl: './dashboard.component.html',
     styleUrls: ['./dashboard.component.scss']
 })
+
+
 export class DashboardComponent implements OnInit {
 
     public param: UserProfileParamInterface = {};
@@ -31,15 +39,69 @@ export class DashboardComponent implements OnInit {
 
     public modalData: ModalInterface<any>;
 
+
+
+
     constructor(public userService: UserService, public apiService: ApiService, public helperService: HelperService) {
         this.initTop()
+
     }
 
+    public download(data:AbsenceDateInterface){
+        var options = {
+            fieldSeparator: ',',
+            quoteStrings: '"',
+            decimalseparator: '.',
+            showLabels: true,
+            showTitle: true,
+            useBom: true,
+            headers: ["First Name", "Last Name", "ID"]
+        };
+
+        // new Angular5Csv(data.data, "Laporan tanggal "+ this.helperService.getReadableDate(new Date(data.latestAbsenceDate.targetDate)), options );
+
+
+
+
+    }
 
     public initTop() {
 
         this.apiExecuteGetTop(() => {
             this.setupFilterForm();
+
+            this.top.data.branchSummary.forEach((currentPupilSelector)=>{
+
+                currentPupilSelector.forEach(current=>{
+                    var title =  "Absence Report "+ this.helperService.getReadableDate(new Date(current.targetDate))
+
+                    setTimeout(()=>{
+
+                        $(document).ready(function() {
+
+                            $(`#summaryTable${current.id}`).DataTable( {
+                                dom: 'Bfrtip',
+                                paging: false,
+                                buttons: [
+                                    {
+                                        extend: 'excel',
+                                        title: title,
+                                    },
+                                    {
+                                        extend: 'print',
+                                        title: title,
+                                    }
+                                ],
+
+                                title: title,
+                            } );
+                        } );
+                    },500)
+                })
+
+
+            })
+
 
         });
 
@@ -206,33 +268,33 @@ export class DashboardComponent implements OnInit {
     }
 
 
-    public presentModal(type:string, data:any){
+    public presentModal(type: string, data: any) {
 
-        if(type=="addThread"){
+        if (type == 'addThread') {
             this.setupThreadForm();
         }
     }
 
-    public setupThreadForm(){
+    public setupThreadForm() {
 
-        var title = new BaseForm("title", 'title');
+        var title = new BaseForm('title', 'title');
         title.rules.minlength = 20;
         title.rules.maxlength = 70;
 
-        var message = new BaseForm("message", 'content');
+        var message = new BaseForm('message', 'content');
         message.rules.minlength = 50;
 
         message.setInputTypeTextarea();
 
         this.modalData = {
-            title: "Create new thread",
-            baseForms: [{baseForms:[title,message]}],
-            subTitle: "Thread bertujuan untuk sharing pertanyaan atau diskusi agar seluruh guru SM Bukit Zaitun dapat berdiskusi",
+            title: 'Create new thread',
+            baseForms: [{baseForms: [title, message]}],
+            subTitle: 'Thread bertujuan untuk sharing pertanyaan atau diskusi agar seluruh guru SM Bukit Zaitun dapat berdiskusi',
             buttons: [
                 {
-                    text: "Submit",
-                    class: "btn btn-success",
-                    onClick: (parentForm)=>{
+                    text: 'Submit',
+                    class: 'btn btn-success',
+                    onClick: (parentForm) => {
                         this.apiExecuteAddThread(parentForm);
                     }
 
@@ -242,7 +304,7 @@ export class DashboardComponent implements OnInit {
 
     }
 
-    public apiExecuteAddThread(form:NgForm){
+    public apiExecuteAddThread(form: NgForm) {
 
 
         console.log(form.value);
@@ -253,18 +315,18 @@ export class DashboardComponent implements OnInit {
                 cmd: 'addThread'
             }
 
-            params = this.helperService.mergeObject(form.value,params);
+            params = this.helperService.mergeObject(form.value, params);
 
 
             this.helperService.presentConfirmation({}, (isConfirmed) => {
-                if(isConfirmed) {
-                    var url:string = ApiService.BASE_API_URL + "thread/op";
-                    var config:ApiConfigInterface = {
+                if (isConfirmed) {
+                    var url: string = ApiService.BASE_API_URL + 'thread/op';
+                    var config: ApiConfigInterface = {
                         url: url,
                         params: params,
                     }
-                    this.apiService.post<ApiBaseResponseInterface>(config,(data)=>{
-                        if(data.isSuccess){
+                    this.apiService.post<ApiBaseResponseInterface>(config, (data) => {
+                        if (data.isSuccess) {
                             this.helperService.closeModal();
                             this.initTop();
 

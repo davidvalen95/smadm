@@ -2,6 +2,7 @@ import {UserDataInterface} from '../../../service/user/user.service';
 import {KeyValueInterface} from '../../../components/floating-input/BaseForm';
 import {ApiBaseResponseInterface, ApiFilterInterface, ApiPaginationResponseInterface} from '../../../service/api/api.service';
 import {AbsenceDateInterface} from '../absence/AbsenceApiInterface';
+import {BranchEventInterface, PlanningInterface} from '../configure-branch/ConfigureBranchApiInterface';
 
 
 export interface BranchInterface{
@@ -20,24 +21,15 @@ export interface BranchInterface{
     //# untuk absensi, jadi hanya dapet target class itu saja
     get_branch_users:BranchUserInterface[];
 
-}
+    //# untuk branchEvent
+    get_branch_events: BranchEventInterface[];
 
-
-export interface BranchSummaryInterface extends BranchInterface{
-
-
-    latestAbsenceDate: AbsenceDateInterface;
-
-    data:{
-        totalAbsence: number;
-        totalNotDone: number;
-        totalPupil: number;
-        availablePercentage: number;
-        notYetFollowedUp:number;
-    }[];
-
+    get_plannings: PlanningInterface[];
 
 }
+
+
+
 
 export interface BranchUserInterface{
 
@@ -76,6 +68,8 @@ export interface BranchDetailTopInterface extends ApiBaseResponseInterface{
         isCanAddPupil:boolean;
         isCanEditPupil:boolean;
         isCanAbsence:boolean;
+
+        isCanConfigureWebBranch:boolean;
     }
 
 

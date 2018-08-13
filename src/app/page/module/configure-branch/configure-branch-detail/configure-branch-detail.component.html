@@ -1,0 +1,161 @@
+<div class="main-content" *ngIf="top">
+    <div class="container-fluid">
+        <div class="row" *ngIf="this.top.isSuccess else notSucceed">
+
+
+            <div class="col-md-12">
+                <h4 class="card-title">Konfigurasi {{top.data.branch.name}}</h4>
+
+            </div>
+
+
+            <!--row-->
+        </div>
+
+
+        <!--teacher-->
+        <div class="row" *ngIf="this.top && this.top.data.branch">
+            <div class="col-xs-12 ">
+                <div class="card">
+                    <div class="card-header" data-background-color="red">
+                        <h4 class="title" style="display: inline-block">Event</h4>
+                        <button data-target="#modal" data-toggle="modal" (click)="presentModal('addEvent',null)"
+                                class="pull-right btn btn-info">Add Event Content
+                        </button>
+                        <p class="">Konten event yang pernah dilakukan {{this.top.data.branch.name}} </p>
+                    </div>
+
+
+                    <div class="card-content table-responsive event"
+                         *ngFor="let currentEvent of this.top.data.branch.get_branch_events">
+
+
+                        <div>
+                            <button class="btn btn-danger pull-right" (click)="apiExecuteDeleteEvent(currentEvent.id)">
+                                Remove
+                            </button>
+                            <button class="btn btn-info pull-right" data-toggle="modal" data-target="#modal"
+                                    (click)="presentModal('editEvent',currentEvent)">Edit
+                            </button>
+                            <h3>{{currentEvent.title}}</h3>
+                        </div>
+                        <p>Description:<br/> {{currentEvent.description}}</p>
+
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <p style="color:tomato">*Click image /  video to delete photo</p>
+                            </div>
+                            <div class="col-sm-3 col-xs-4" *ngFor="let currentPhoto of currentEvent.get_photos">
+                                <img    (click)="apiExecuteDeletePhoto(currentPhoto.id, currentEvent.id)"
+                                     class="img-responsive" *ngIf="currentPhoto.type == 1 && !currentPhoto.youtubeLink"
+                                     [src]="this.apiService.baseUrl + currentPhoto.path + currentPhoto.nameSm">
+
+
+                                <div style="position:relative;" (click)="apiExecuteDeletePhoto(currentPhoto.id, currentEvent.id)">
+
+                                    <div style="position:absolute;top:0;left:0;right:0;bottom:0;width:100%;height:100%;z-index: 999;opacity:0;">
+
+                                    </div>
+                                    <iframe  *ngIf="currentPhoto.youtubeLink" class="img-responsive"
+                                             [src]="'https://www.youtube.com/embed/' + currentEvent.youtubeLink | keepAsSrc">
+                                    </iframe>
+                                </div>
+                            </div>
+                            <!--row?-->
+                        </div>
+
+
+                        <div class="row">
+                            <div class="col-12" *ngIf="currentEvent.youtubeLink && currentEvent.youtubeLink != ''">
+
+                            </div>
+                            <!--row-->
+                        </div>
+
+
+                    </div>
+                </div>
+
+                <!--<app-pagination [onClick]="onClickPagination" *ngIf="top" [filter]="filter" [pagination]="top.data.rooms"></app-pagination>-->
+            </div>
+
+
+            <!--row-->
+        </div>
+
+
+        <div class="row">
+            <div class="col-xs-12">
+
+                <div class="card">
+                    <div class="card-header" data-background-color="red">
+                        <h4 class="title" style="display: inline-block">Year Planning</h4>
+                        <button data-target="#modal" data-toggle="modal"
+                                (click)="presentModal('addPlanning')" class="pull-right btn btn-info">Add Planning
+                        </button>
+                        <!--<p class="category"></p>-->
+                    </div>
+
+                    <div class="card-content table-responsive"
+                    >
+                        <table class="table">
+                            <thead class="text-danger">
+                            <tr>
+                                <th>No</th>
+                                <th>Date</th>
+                                <!--<th>No. Tlp</th>-->
+                                <th>Title</th>
+                                <th>Description</th>
+                                <th>Action</th>
+
+
+                                <!--<th>Action</th>-->
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr appMarkClicked="" *ngFor="let data of top.data.branch.get_plannings; let i = index">
+                                <td>{{i + 1}}</td>
+                                <td>{{this.helperService.getReadableDate(data.dueDate)}}</td>
+                                <td>{{data.title}}</td>
+                                <td>{{data.description}}</td>
+                                <td>
+                                    <button class="btn btn-danger " (click)="apiExecuteDeletePlanning(data.id)">
+                                        Remove
+                                    </button>
+                                    <button class="btn btn-info " data-toggle="modal" data-target="#modal"
+                                            (click)="presentModal('editPlanning',data)">Edit
+                                    </button>
+                                </td>
+
+
+                            </tr>
+
+                            </tbody>
+                        </table>
+
+                    </div>
+
+                    <!--card?-->
+                </div>
+
+                <!--col-->
+            </div>
+            <!--row-->
+        </div>
+
+
+        <!--containerfluid-->
+    </div>
+
+
+    <!--mainContent-->
+</div>
+
+<app-my-modal [modalData]="modalData"></app-my-modal>
+
+
+<ng-template #loading>loading</ng-template>
+<ng-template #notSucceed>{{title}} Not Found</ng-template>
+<ng-template #noDataFound>
+    <div class="card-content">No data found</div>
+</ng-template>

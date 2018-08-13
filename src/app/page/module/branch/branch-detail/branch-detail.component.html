@@ -14,6 +14,7 @@
         </div>
         <div class="text-center">
           <a *ngIf="top.data.isCanAbsence" [routerLink]="['/absence/list' , {id: top.data.branch.id}]"  class="btn btn-info ">Absensi</a>
+          <a *ngIf="top.data.isCanConfigureWebBranch" [routerLink]="['/branch/configure/web' , {id: top.data.branch.id}]"  class="btn btn-info ">Konfigur website sekolah minggu</a>
 
         </div>
       </div>
@@ -112,11 +113,11 @@
 
           <div class="card-content " *ngIf="this.top.data.branch.get_users_as_pupil.length > 0 else noDataFound">
 
-            <button *ngIf="isCanAddPupil"  (click)="apiExecuteAdvanceClass(this.top.data.branch)"  class="btn btn-danger">Advance Class</button>
+            <!--<button *ngIf="isCanAddPupil"  (click)="apiExecuteAdvanceClass(this.top.data.branch)"  class="btn btn-danger">Advance Class</button>-->
             <button *ngIf="isCanAddPupil"  data-target="#modal" data-toggle="modal"  (click)="presentModal('pupil')"  class="btn btn-info">Add Pupil</button>
 
             <div style="display:block" class="table-responsive">
-              <table class="table ">
+              <table id='pupilTable' class="table ">
                 <thead class="text-danger">
                 <tr>
                   <th>No</th>

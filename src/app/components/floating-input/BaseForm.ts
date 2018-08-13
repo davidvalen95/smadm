@@ -16,7 +16,7 @@ export class BaseForm{
     public rules: InputRules                                = {isRequired: true, min: 0};
     private isHidden: boolean                                = false;
     public styling: InputStyle                              = {};
-    public value: any                                       = "";
+    public value: string                                       = "";
     public isReadOnly: boolean                              = false;
     public dateSetting: DateSetting                         = {min: "1900-01-01"};
     public changeListener: ReplaySubject<BaseForm>          = new ReplaySubject(0);
@@ -32,11 +32,10 @@ export class BaseForm{
     private lastBroadcastWithNumber: number                 = -1;
     public classDisplay:string = "col-xs-12";
     public title:string = "";
-    public infoFileName:string;
     public autoCompleteOption:AutoCompleteOptionInterface = {config:{url:""}, searchValue: "", lastRequest:new Date()};
 
+    public fileConfig: FileConfigurationInterface = {formContainer: {}};
     //# for file auto add
-    private formValueContainer = null;
 
 
     public attachmentInfo: AttachmentInfoInterface = {isSet: false}
@@ -45,12 +44,12 @@ export class BaseForm{
     public buttonRightSuccess: ButtonSettingInterface = {
         label: "",
         isHidden: true,
-        clickListener: new ReplaySubject(0)
+        clickListener: ()=>{}
     };
     public buttonRightDanger: ButtonSettingInterface  = {
         label: "",
         isHidden: true,
-        clickListener: new ReplaySubject(0)
+        clickListener: ()=>{}
     };
 
     private isSelectProcessing: boolean = false;
@@ -153,13 +152,26 @@ export class BaseForm{
      * @param {object} formValueContainer value json di controller buat submit
      * @returns {this}
      */
-    public setInputTypeFile(formValueContainer: object) {
+    public setInputTypeFile(fileConfig:FileConfigurationInterface) {
         this.inputType = InputType.file;
         // this.value = "0 ";
         // this.fileCallbackEvent = callbackEvent;
 
-        this.formValueContainer = formValueContainer;
+        if(fileConfig.isMultilple){
+            this.infoBottom += "<p>Can select multiple files</p>";
+        }
+
+        fileConfig.accept = fileConfig.accept || "" ;
+
+        this.fileConfig = fileConfig;
+
+
         return this;
+
+    }
+    public setInputFileImageOnly(){
+        this.fileConfig.accept = "image/*";
+        this.infoBottom += "<p>Only accept image</p>";
 
     }
 
@@ -198,7 +210,7 @@ export class BaseForm{
 
     public setIsReadOnly(isReadOnly:boolean){
         this.isReadOnly = isReadOnly;
-        this.setIsRequired(false);
+        this.setIsRequired(isReadOnly);
         if(isReadOnly){
             this.title = "This field is not editable";
         }else{
@@ -320,11 +332,7 @@ export class BaseForm{
 
     }
 
-    public activateButtonRightDanger(label: string): ReplaySubject<BaseForm> {
-        this.buttonRightDanger.label    = label;
-        this.buttonRightDanger.isHidden = false;
-        return this.buttonRightDanger.clickListener;
-    }
+
 
     public setInputTypeSearchBar(url: string, httpParams: HttpParams, paramBindEvent: string[], processData: (serverResponse: any) => KeyValueInterface[]) {
         this.placeholder = `Search ${this.label}`;
@@ -403,8 +411,23 @@ export class BaseForm{
 
         if(this.inputType == InputType.file && event){
 
-            this.formValueContainer[this.name] = event.target['files'][0];
-            this.infoFileName = `File set. ${event.target['files'][0].name}`
+            console.log('fileProcessing',event.target['files'], this.fileConfig.formContainer );
+
+            for(var key in this.fileConfig.formContainer){
+                if(key.indexOf(this.name)>0){
+                    delete this.fileConfig.formContainer[key];
+                }
+            }
+            for(var key in event.target['files']){
+                var value = event.target['files'][key];
+                this.fileConfig.formContainer[this.name+`[${key}]`]= value ;
+
+            }
+
+            console.log('fileProcessing',event.target['files'], this.fileConfig.formContainer );
+
+
+            this.fileConfig.infoFileName = `File set. ${event.target['files'][0].name}`
 
 
 
@@ -509,6 +532,10 @@ export class BaseForm{
     }
 
 
+
+
+
+
 }
 
 export interface KeyValueInterface {
@@ -563,7 +590,7 @@ export interface SearchBarSetting {
 
 export interface ButtonSettingInterface {
     label: string;
-    clickListener: ReplaySubject<BaseForm>;
+    clickListener: (baseForm:BaseForm)=>void;
     isHidden: boolean;
 }
 
@@ -583,4 +610,14 @@ export interface AutoCompleteOptionInterface{
 
 export interface AutoCompleteKeyValueInterface extends KeyValueInterface{
     display?:string;
+}
+
+export interface FileConfigurationInterface{
+
+    isMultilple?:boolean;
+    allowType?:string;
+    formContainer:object;
+    infoFileName?:string;
+    accept?:string;
+
 }

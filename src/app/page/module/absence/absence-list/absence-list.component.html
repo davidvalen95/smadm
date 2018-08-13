@@ -1,6 +1,6 @@
 <div class="main-content" *ngIf="top">
-  <div class="container-fluid">
-    <div class="row" *ngIf="this.top.isSuccess else notSucceed">
+  <div class="container-fluid" *ngIf="this.top.isSuccess else notSucceed">
+    <div class="row" >
 
 
 
@@ -16,10 +16,10 @@
         </div>
       </div>
 
-      <div class="col-md-8 col 12" >
+      <div [ngClass]="{'col-md-offset-4':pupilSelector == 1}" class="col-md-8 col-12" *ngFor="let pupilSelector of [0,1]">
         <div class="card" >
-          <div class="card-header" data-background-color="red">
-            <h4 class="title">Record absensi</h4>
+          <div class="card-header" data-background-color="blue">
+            <h4 class="title">Record absensi <b>{{pupilSelector == 0 ? "GURU" : "MURID"}}</b></h4>
             <p class="category">Data 4 minggu terakhir</p>
           </div>
           <div class="card-content table-responsive">
@@ -29,7 +29,7 @@
               <tr>
                 <th>Tanggal</th>
                 <th>Absen /<br>Tidak hadir</th>
-                <th>Total<br/>Murid</th>
+                <th>Total<br/>{{pupilSelector == 0 ? "GURU" : "MURID"}}<br/>terabsensi</th>
                 <th>Belum<br/>Follow Up</th>
                 <th>Presentase<br/>Kehadiran</th>
                 <th>Kelas <br/>Belum terisi</th>
@@ -38,7 +38,7 @@
               </tr>
               </thead>
               <tbody >
-              <tr *ngFor="let data of this.top.data.absenceDateRecords; let i = index"  data-toggle="modal" data-target="#absenceDateModal" >
+              <tr *ngFor="let data of this.top.data.absenceDateRecords[pupilSelector]; let i = index"  data-toggle="modal" data-target="#absenceDateModal" >
                 <td>{{helperService.getReadableDate(data.targetDate)}}</td>
                 <td>{{data.totalAbsence}}</td>
                 <td>{{data.totalPupil}}</td>
@@ -63,10 +63,12 @@
 
     <!--Absensi Not Done-->
     <div class="row" *ngIf="this.top && this.top.data.branch">
-      <div class="col-xs-12 col-md-12">
+
+        <!--loop for is pupil table-->
+      <div class="col-xs-12 col-md-12" *ngFor="let currentAbsenceFor of [0,1]">
         <div class="card">
           <div class="card-header" data-background-color="red">
-            <h4 class="title" style="display: inline-block">Absensi belum terisi</h4>
+              <h4 class="title" style="display: inline-block">Absensi <b>{{currentAbsenceFor == 0 ? "Guru" : "Murid"}}</b> belum terisi</h4>
             <!--<p class="category"></p>-->
           </div>
 
@@ -85,16 +87,26 @@
               </thead>
               <tbody >
               <tr appMarkClicked="" *ngFor="let data of this.top.data.absenceDatesNotDone; let i = index" >
-                <td>{{i + 1}}</td>
-                <td>{{helperService.getReadableDate(data.targetDate)}}</td>
-                <!--<td>{{data.get_user.phone}}</td>-->
-                <td>
-                  <ul class="notYetDone">
-                    <li *ngFor="let absenceBranch of data.get_absence_branches" data-target="#modal" data-toggle="modal" (click)="presentModal('absence', absenceBranch)">
-                      {{absenceBranch.get_select_class.key}}
-                    </li>
-                  </ul>
-                </td>
+
+                  <td>{{i + 1}}</td>
+                  <td>{{helperService.getReadableDate(data.targetDate)}}</td>
+                  <!--<td>{{data.get_user.phone}}</td>-->
+                  <td>
+                    <ul class="notYetDone">
+                      <span *ngFor="let absenceBranch of data.get_absence_branches" >
+
+                          <!--if not target is pupil then hide, -->
+                        <li *ngIf="currentAbsenceFor === absenceBranch.isPupil"data-target="#modal" data-toggle="modal" (click)="presentModal('absence', absenceBranch)">
+
+                          {{absenceBranch.get_select_class.key}}
+                        </li>
+
+
+                      </span>
+
+                    </ul>
+                  </td>
+
 
 
               </tr>

@@ -22,7 +22,7 @@ export class UserComponent implements OnInit {
     public top: UserListTopInterface;
     public modalData: ModalInterface<any> = {baseForms:[], title: "", buttons: []};
     public rowBaseForms: RowFloatingInputInterface[] = [];
-    public title: string = "Module Room";
+    public title: string = "Module User";
     public filter: FilterInterface = new FilterInterface();
     public filterForm: RowFloatingInputInterface[] = [];
     public readableModalData: ContainerKeyValueInterface[] = [];
@@ -215,7 +215,8 @@ export class UserComponent implements OnInit {
 
         var email = new BaseForm('Email', 'email');
         email.setInputTypeEmail();
-        email.infoBottom = "Email untuk user 'murid', tidak membutuhkan email karena tidak perlu login. Hanya untuk melengkapi data saja. Tidak diharuskan agar tidak mempersulit pendataan murid"
+        email.setIsRequired(false)
+        // email.infoBottom = "Email untuk user 'murid', tidak membutuhkan email karena tidak perlu login. Hanya untuk melengkapi data saja. Tidak diharuskan agar tidak mempersulit pendataan murid"
         // email.setIsHidden(true, true);
 
 
@@ -230,6 +231,8 @@ export class UserComponent implements OnInit {
         nbg.infoBottom = "*Contoh B0001, B5099 dst";
         nbg.setIsRequired(false);
         nbg.classDisplay = 'col-xs-6';
+        nbg.infoBottom = "NBG untuk user 'murid', tidak membutuhkan NBG karena tidak perlu login. Hanya untuk melengkapi data saja. Tidak diharuskan agar tidak mempersulit pendataan murid"
+        //
 
 
         var address = new BaseForm('Address' , 'address');
@@ -246,14 +249,14 @@ export class UserComponent implements OnInit {
         selectRole.setInputTypeSelect(this.top.data.selectRoles);
         selectRole.changeListener.subscribe((baseForm)=>{
             if(baseForm.value == 'teacher'){
-                email.infoBottom = "Penambahan guru membutuhkan data email dibutuhkan untuk fitur mengirim email, fitur login, dan menggunakan modul di website ini";
+                nbg.infoBottom = "Penambahan guru membutuhkan data nbg dibutuhkan untuk  fitur login, dan menggunakan modul di website ini";
 
             }
             if(baseForm.value == 'pupil'){
-                email.infoBottom = "User 'murid', tidak membutuhkan email karena tidak perlu login. Hanya untuk melengkapi data saja. Tidak diharuskan agar tidak mempersulit pendataan murid"
+                nbg.infoBottom = "User 'murid', tidak membutuhkan email karena tidak perlu login. Hanya untuk melengkapi data saja. Tidak diharuskan agar tidak mempersulit pendataan murid"
 
             }
-            email.setIsRequired(baseForm.value == 'teacher');
+            // email.setIsRequired(baseForm.value == 'teacher');
             nbg.setIsRequired(baseForm.value =='teacher');
         });
         selectRole.classDisplay = 'col-xs-4';
@@ -262,9 +265,24 @@ export class UserComponent implements OnInit {
         var birthDate = new BaseForm('Birth Date / Tanggal Lahir', 'birthDate');
         birthDate.inputType = InputType.date
 
+        var fatherName = new BaseForm('Father Name', 'father');
+        fatherName.classDisplay = 'col-xs-6';
+        fatherName.setIsRequired(false);
+        var fatherPhone = new BaseForm('Father phone', 'fatherPhone');
+        fatherPhone.classDisplay = 'col-xs-6';
+        fatherPhone.setIsRequired(false);
+
+        var motherName = new BaseForm('mother Name', 'mother');
+        motherName.classDisplay = 'col-xs-6';
+        motherName.setIsRequired(false);
+
+        var motherPhone = new BaseForm('mother phone', 'motherPhone');
+        motherPhone.classDisplay = 'col-xs-6';
+        motherPhone.setIsRequired(false);
+
 
         this.modalData.baseForms = [{
-            baseForms:[selectRole, branch, selectClass, email, name, nbg,address,phone ,birthDate,]
+            baseForms:[selectRole, branch, selectClass, email, name, nbg,address,phone ,birthDate,fatherName, fatherPhone,motherName,motherPhone]
         }];
         this.modalData.buttons.push({
             text: "Submit",

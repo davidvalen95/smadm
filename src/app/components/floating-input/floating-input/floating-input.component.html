@@ -62,6 +62,8 @@
             [hidden]="this.inputType == 'autocomplete' || this.inputType=='select' || this.inputType=='radio'  ||  this.inputType == 'textarea' || baseForm.isReadOnly  || baseForm.isHidden"
             [disabled]="baseForm.isDisabled"
             [(ngModel)]="this.baseForm.value"
+            [multiple]="baseForm.fileConfig.isMultilple && this.inputType == 'file'"
+            [accept] = "baseForm.fileConfig.accept"
             #ionInputModel="ngModel"
             [type]="this.inputType"
             [name]="baseForm.name"
@@ -77,7 +79,7 @@
             (focus)="onFieldClicked(ionInputModel)"
             class="form-control"
             [title]="baseForm.title"
-            id="myInput"
+
 
     >
 
@@ -214,7 +216,7 @@
     <!--&lt;!&ndash;for display onlu&ndash;&gt;-->
 
     <p [hidden]="baseForm.isHidden || baseForm.infoBottom == ''" class="infoBottom"  [innerHTML]="baseForm.infoBottom | keepAsHtml"></p>
-    <p [hidden]="baseForm.isHidden || !baseForm.infoFileName" class="infoBottom"  [innerHTML]="baseForm.infoFileName | keepAsHtml"></p>
+    <p [hidden]="baseForm.isHidden || !baseForm.fileConfig.infoFileName" class="infoBottom"  [innerHTML]="baseForm.fileConfig.infoFileName | keepAsHtml"></p>
 
     <div [hidden]="baseForm.isHidden" *ngIf="finalModel">
     <!--<span>{{debug()}}</span>-->
@@ -230,10 +232,10 @@
 
     </div>
 
-    <!--<div *ngIf="!rowBaseForms.buttonRightSuccess.isHidden || !rowBaseForms.buttonRightSuccess.isHidden" style="margin-bottom: 16px;">-->
-    <!--<button [hidden]="rowBaseForms.buttonRightSuccess.isHidden" (click)="rowBaseForms.buttonRightSuccess.clickListener.next(this.rowBaseForms)" type="button" item-right="" ion-button="" color="primary">{{rowBaseForms.buttonRightSuccess.label}}</button>-->
-    <!--<button [hidden]="rowBaseForms.buttonRightDanger.isHidden" (click)="rowBaseForms.buttonRightDanger.clickListener.next(this.rowBaseForms)" type="button" item-right="" ion-button="" color="danger">{{rowBaseForms.buttonRightDanger.label}}</button>-->
-    <!--</div>-->
+    <div *ngIf="!baseForm.buttonRightSuccess.isHidden || !baseForm.buttonRightSuccess.isHidden" style="margin-bottom: 16px;">
+    <button [hidden]="baseForm.buttonRightSuccess.isHidden" (click)="baseForm.buttonRightSuccess.clickListener(baseForm)" type="button" item-right="" ion-button="" color="primary">{{baseForm.buttonRightSuccess.label}}</button>
+    <button [hidden]="baseForm.buttonRightDanger.isHidden" (click)="baseForm.buttonRightDanger.clickListener(this.baseForm)" type="button" item-right="" ion-button="" color="danger">{{baseForm.buttonRightDanger.label}}</button>
+    </div>
 
 
     <!--<ng-template #ionInput>-->

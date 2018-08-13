@@ -3,16 +3,22 @@
   <form #parentForm="ngForm" (submit)="this.login(parentForm)">
 
     <div class="row  ">
-      <div class="col-xs-12 col-md-offset-4  col-md-4 ">
+
+      <div class=" col-xs-4 col-xs-offset-4 col-md-offset-5  col-md-2 " style="margin-top: 16px;">
+        <img src="assets/image/global/logo-yellow.png" class="img-responsive"/>
+      </div>
+
+
+      <div class=" col-xs-8 col-xs-offset-2 col-md-offset-4  col-md-4 ">
         <div class="form-group form-black is-empty">
-          <label class="control-label">Username</label>
-          <input ngModel="" type="text" class="form-control" name="email">
+          <label class="control-label">NBG</label>
+          <input ngModel="" type="text" class="form-control" name="nbg">
         </div>
       </div>
     </div>
 
     <div class="row ">
-      <div class="col-xs-12 col-md-offset-4 col-md-4 ">
+      <div class="col-xs-8 col-xs-offset-2  col-md-offset-4 col-md-4 ">
         <div class="form-group form-black  is-empty">
           <label class="control-label">Password</label>
           <input ngModel=""  type="password" name="password" class="form-control" >
@@ -22,6 +28,11 @@
 
         <!--<a data-target="#modal" data-toggle="modal" (click)="presentModal()" href='javascript:void(0)' >Register</a>-->
 
+      </div>
+      <div class="text-justify col-xs-8 col-xs-offset-2  col-md-offset-4 col-md-4" >
+        <p>Jika pertama kali login (atau belum pernah mengganti password), masukan password dengan format 2 huruf pertama nama depan + tanggal lahir</p>
+        <p>contoh: nama <b>ad</b>am, nbg: b0001, tanggal lahir <b>13-02-1995</b></p>
+        <p>Masuk dengan nbg b0001, password ad13021995</p>
       </div>
     </div>
 
@@ -57,5 +68,11 @@
 
     </div>
 
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-xs-12 " style="text-align: center;">
+    <a routerLink="/absence/barcode">Modul absensi murid dan guru melalui barcode</a>
   </div>
 </div>

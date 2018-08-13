@@ -43,13 +43,17 @@ export class LoginComponent implements OnInit {
   ngOnInit() {
   }
 
+  ngAfterContentInit(){
+      console.log('halo');
+  }
+
 
   login(form:NgForm){
 
-    var username = form.value.email;
+    var nbg = form.value.nbg;
     var password = form.value.password;
 
-    this.userService.apiExecuteLogin(username,password);
+    this.userService.apiExecuteLogin(nbg,password);
   }
 
 
@@ -58,29 +62,7 @@ export class LoginComponent implements OnInit {
         this.filter.cmbSearchBy = 'page';
 
     }
-    //
-    // public apiExecuteGetTop(onFinished?: (response: AdvertisementTopInterface) => void) {
-    //
-    //     var params = {};
-    //
-    //     params = this.helperService.mergeObject(params, this.filter);
-    //
-    //     var config: ApiConfigInterface = {
-    //         url: ApiService.BASE_API_URL + 'module/advertisement',
-    //         toastMessage: this.title + ' advertisement',
-    //         params: params,
-    //     };
-    //
-    //
-    //     this.apiService.get<AdvertisementTopInterface>(config, (response: AdvertisementTopInterface) => {
-    //         if (response.isSuccess) {
-    //             this.top = response;
-    //             if (onFinished) {
-    //                 onFinished(response);
-    //             }
-    //         }
-    //     });
-    // }
+
 
 
     public setRegisterForm() {
@@ -149,22 +131,6 @@ export class LoginComponent implements OnInit {
             var params = {
                 cmd: 'registerAdmin',
                 // id: this.modalData.isApprove ? this.modalData.data.id : '-1',
-            }
-            params = this.helperService.mergeObject(params, form.value);
-
-            this.apiFormSubmit(params);
-        } else {
-            // //this.helperService.presentNotification("Please check mark in red",NotificationTypeInterface.danger);
-            this.helperService.presentAlert({message: 'Please check mark in red', title: 'Form is not valid'});
-        }
-    }
-
-    formApprovalSubmit(form: NgForm) {
-        console.log('formSubmitRaw', form);
-        if (form.valid) {
-            var params = {
-                cmd: 'approve',
-                // table: this.modalData.table,
             }
             params = this.helperService.mergeObject(params, form.value);
 

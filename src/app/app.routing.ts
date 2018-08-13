@@ -16,16 +16,20 @@ import {BranchComponent} from './page/module/branch/branchList/branch.component'
 import {BranchDetailComponent} from './page/module/branch/branch-detail/branch-detail.component';
 import {AbsenceListComponent} from './page/module/absence/absence-list/absence-list.component';
 import {ThreadDetailComponent} from './page/thread/thread-detail/thread-detail.component';
+import {ConfigureBranchDetailComponent} from './page/module/configure-branch/configure-branch-detail/configure-branch-detail.component';
+import {AbsenceBarcodeComponent} from './page/absence-barcode/absence-barcode.component';
 
 
 
 
 const routes: Routes =[
+    { path: 'absence/barcode',       component: AbsenceBarcodeComponent },
     { path: 'dashboard',       component: DashboardComponent },
     { path: 'profile',   component: UserProfileComponent },
     { path: 'user-list',   component: UserComponent },
     { path: 'branch/list',   component: BranchComponent },
     { path: 'branch/detail',   component: BranchDetailComponent },
+    { path: 'branch/configure/web',   component:ConfigureBranchDetailComponent },
     { path: 'thread/detail',   component: ThreadDetailComponent },
     { path: 'absence/list',   component: AbsenceListComponent },
     { path: 'table-list',     component: TableListComponent },

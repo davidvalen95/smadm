@@ -13,6 +13,7 @@ export interface ProfileTopInterface extends ApiBaseResponseInterface{
         isCanScore: boolean;
         isCanEditNbg:boolean ;
         isCanChangePassword:boolean;
+        selectScoreStatus:KeyValueInterface[];
     }
 
 }

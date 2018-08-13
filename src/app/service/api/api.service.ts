@@ -21,6 +21,8 @@ export class ApiService {
     //
     public static BASE_API_URL: string = 'http://localhost/sm/api/';
     public static BASE_URL: string = 'http://localhost/sm/';
+    // public static BASE_API_URL: string = 'https://bukitzaitunsm.com/api/';
+    // public static BASE_URL: string = 'https://bukitzaitunsm.com/';
 
     public baseApiUrl = ApiService.BASE_API_URL;
     public baseUrl = ApiService.BASE_URL;
@@ -120,6 +122,9 @@ export class ApiService {
                             var value = error[key];
                             this.helperService.presentToast({type: NotificationTypeInterface.danger, title: MyHelper.ucWord(key), message: value})
                         }
+                    }else{
+                        this.helperService.presentToast({message:"Network Error", type: NotificationTypeInterface.danger});
+
                     }
                 }catch(e){
 
@@ -127,7 +132,6 @@ export class ApiService {
 
 
                 //this.helperService.presentNotification('Cannot fulfill request', NotificationTypeInterface.danger);
-                this.helperService.presentToast({message:"Network Error", type: NotificationTypeInterface.danger});
 
             }
 

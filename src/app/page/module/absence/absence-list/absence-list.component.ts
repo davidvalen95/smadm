@@ -9,6 +9,7 @@ import {UserDataInterface, UserService} from '../../../../service/user/user.serv
 import {ModalInterface} from '../../../../app.component';
 import {ActivatedRoute} from '@angular/router';
 import {AbsenceBranchInterface, AbsenceDateInterface, AbsenceListTopInterface, UserAbsenceRecordInterface} from '../AbsenceApiInterface';
+import {DatePipe} from '@angular/common';
 
 declare var $: any;
 
@@ -150,6 +151,7 @@ export class AbsenceListComponent implements OnInit {
 
         if (type == 'viewDetail') {
 
+            console.log('data',data);
             this.absenceDateModalData = data;
 
         }
@@ -210,8 +212,9 @@ export class AbsenceListComponent implements OnInit {
 
         absenceBranch.get_branch.get_branch_users.forEach((branchUser: BranchUserInterface, i) => {
 
+
             var branchUserId = new BaseForm('branchUserId', `branchUserId[${i}]`);
-            branchUserId.value = branchUser.id;
+            branchUserId.value = ""+ branchUser.id;
             branchUserId.setIsHidden(true);
 
 
@@ -261,6 +264,12 @@ export class AbsenceListComponent implements OnInit {
             });
             available.classDisplay = 'col-xs-6 ';
             available.value = '1';
+            if(branchUser.get_user.isAbsenceBarcode){
+                available.value = "1";
+                available.setIsReadOnly(true);
+                var pipe = new DatePipe("id-ID");
+                available.infoBottom = `${branchUser.get_user.name} telah melakukan absen barcode untuk tanggal ${pipe.transform(branchUser.get_user.barcodeDate,"EEEE, dd MMMM yyyy")}`;
+            }
 
 
             rowFloating.push({
@@ -305,15 +314,18 @@ export class AbsenceListComponent implements OnInit {
             }
 
             this.helperService.presentConfirmation({}, (isConfirmed) => {
-                this.apiService.post<ApiBaseResponseInterface>(config, (data) => {
-                    if (data.isSuccess) {
-                        this.topInit();
-                        userAbsenceRecord.reason = form.value.reason;
-                        userAbsenceRecord.isFollowedUp = true;
+                if(isConfirmed) {
 
-                        $('#modal').modal('hide');
-                    }
-                });
+                    this.apiService.post<ApiBaseResponseInterface>(config, (data) => {
+                        if (data.isSuccess) {
+                            this.topInit();
+                            userAbsenceRecord.reason = form.value.reason;
+                            userAbsenceRecord.isFollowedUp = true;
+
+                            $('#modal').modal('hide');
+                        }
+                    });
+                }
             });
 
         } else {
@@ -341,13 +353,16 @@ export class AbsenceListComponent implements OnInit {
             }
 
             this.helperService.presentConfirmation({}, (isConfirmed) => {
-                this.apiService.post<ApiBaseResponseInterface>(config, (data) => {
-                    if (data.isSuccess) {
-                        this.helperService.closeModal();
-                        this.topInit();
-                        // form.resetForm();
-                    }
-                });
+                if(isConfirmed) {
+
+                    this.apiService.post<ApiBaseResponseInterface>(config, (data) => {
+                        if (data.isSuccess) {
+                            this.helperService.closeModal();
+                            this.topInit();
+                            // form.resetForm();
+                        }
+                    });
+                }
             });
 
         } else {

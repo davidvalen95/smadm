@@ -4,7 +4,11 @@
 
 
     <div class="row" style="">
-      <div class=" col-xs-9 col-md-6" >
+      <div class=" col-xs-12 col-md-6" >
+        <button (click)="presentModal('newUser')" class="btn btn-info centerMargin" data-target="#modal" data-toggle="modal">Add user</button>
+
+      </div>
+      <div class=" col-xs-12 col-md-6" >
         <div class="card">
           <div (click)="this.filter.isOpen = !this.filter.isOpen" class="card-header" data-background-color="blue">
             <h4 class="title">Search for {{title}}</h4>
@@ -21,10 +25,7 @@
         </div>
       </div>
 
-      <div class=" col-xs-3 col-md-6" >
-        <button (click)="presentModal('newUser')" class="btn btn-info centerMargin" data-target="#modal" data-toggle="modal">Add user</button>
 
-      </div>
 
 
     </div>
@@ -56,7 +57,7 @@
               <tr *ngFor="let data of top.data.users.data; let i = index;" data-target="#detailModal " data-toggle="modal"  >
 
                 <td>{{i + 1}}</td>
-                <td><a [routerLink]="['/profile',{id:data.id}]">{{data.name}}</a></td>
+                <td style="max-width: 120px; text-overflow: clip"><a [routerLink]="['/profile',{id:data.id}]">{{data.name}}</a></td>
                 <td><ol><li *ngFor="let detail of data.get_branch_user"><span *ngIf="detail.get_class">{{detail.get_role.key || '-'}}</span></li></ol></td>
 
                 <td><ol><li *ngFor="let detail of data.get_branch_user"> <a [routerLink]="['/branch/detail',{id:detail.get_branch.id}]">{{detail.get_branch.name}}</a></li></ol></td>
